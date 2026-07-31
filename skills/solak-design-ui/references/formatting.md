@@ -37,13 +37,18 @@ Sayaç seri no, fatura no, EIC/ETSO kodu, tesis kodu, dönem (`2026-07`), vergi 
 |--|--------------|--------|
 | Hizalama | **Sağa** | **Sola** (metin gibi) |
 | Binlik ayırıcı | Var | **Yok** — `4471 0982 331` kendi bloklamasını korur |
-| Tabular figür | Zorunlu | Faydalı (basamak saymayı kolaylaştırır) |
+| Font | Sans + tabular figür; **mono asla** | Teknik kimlikte **mono** (`typography.md`) |
 | Yuvarlama | Olabilir | Asla |
 
 ```css
-.num   { font-variant-numeric: tabular-nums; text-align: right; }
-.ident { font-variant-numeric: tabular-nums; text-align: left; letter-spacing: 0.02em; }
+.num        { font-variant-numeric: tabular-nums lining-nums; text-align: right; }
+/* teknik kimlik: UUID, EIC, sayaç no, endpoint, hash */
+.ident-tech { font-family: var(--font-mono); font-variant-numeric: tabular-nums lining-nums; text-align: left; }
+/* insan-okur kimlik: dönem, tarih benzeri kodlar — mono değil */
+.ident      { font-variant-numeric: tabular-nums lining-nums; text-align: left; letter-spacing: 0.02em; }
 ```
+
+`lining-nums` ihmal edilemez: bazı font aileleri oldstyle figürü (alçalan `3`, `4`, `7`, `9`) varsayılan kullanır ve `tabular-nums` bunu düzeltmez — kolon hizalı ama satır zıplar. Ayrıntı `typography.md`'de.
 
 Kimliği sağa hizalamak onu toplanabilir bir miktar gibi gösterir; kolondaki gözü de boşa yorar.
 

@@ -7,7 +7,8 @@ Yoğunluk kararı için önce `density-and-direction.md`.
 | Veri tipi | Hizalama | Not |
 |-----------|----------|-----|
 | Metin, etiket | Sola | — |
-| Sayı, para, yüzde | **Sağa** + `font-variant-numeric: tabular-nums` | Basamaklar dikey hizalanır, karşılaştırma mümkün olur |
+| Sayı, para, yüzde | **Sağa** + `font-variant-numeric: tabular-nums lining-nums` | Basamaklar dikey hizalanır, karşılaştırma mümkün olur. **Monospace kullanma** (`typography.md`) |
+| Teknik kimlik (sayaç no, EIC, UUID, hash) | Sola + **monospace** | Karakteri tek tek okunur ve dikte edilir; ölçülen sayı değildir |
 | Tarih, saat | Sola, sabit genişlik | Format tutarlı: tek tabloda karışık format yok |
 | Durum, etiket (badge) | Sola | Renk **tek gösterge olamaz** — metin veya ikon eşlik eder |
 | Eylem | Sağa, en sağ kolon | Sıralanamaz; yatay kaydırmada sticky olabilir |
@@ -15,7 +16,7 @@ Yoğunluk kararı için önce `density-and-direction.md`.
 ```css
 .cell-numeric {
   text-align: right;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 ```
 
