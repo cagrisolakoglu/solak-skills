@@ -22,34 +22,77 @@ solak-skills/
 
 ## Kurulum
 
-Claude Code'un skill'leri görmesi için `skills/` altındaki klasörü kopyala veya sembolik link ver:
+Claude Code skill'leri `~/.claude/skills/<skill-adı>/` altında arar (proje bazlı kullanım için `<proje>/.claude/skills/`). Klasör adı `SKILL.md` frontmatter'ındaki `name` ile **birebir aynı** olmalı; farklıysa skill yüklenmez.
+
+İki yol var, seçim önemli:
+
+| Yol | Ne zaman | Sonuç |
+|-----|----------|-------|
+| **Bağlantı** (junction / symlink) | Skill geliştirilecek veya güncel tutulacak | Repo tek kaynak; `git pull` anında kurulu skill'e yansır |
+| **Kopya** | Salt kullanım, repo makinede kalmayacak | Bağımsız kopya; repo değişince elle güncellenir |
+
+Kopya iki yerde **ayrışır**: bir tarafta düzeltilen kural öbür tarafta olmaz. Geliştirme yapılacaksa bağlantı kur.
+
+### Bağlantı — Windows
+
+Sembolik link yönetici yetkisi (veya Geliştirici Modu) ister; **dizin junction'ı istemez.** Bu yüzden sıra: junction → symlink → kopya.
 
 ```powershell
-# Tek skill (user scope)
-Copy-Item -Recurse skills\solak-create-skill "$env:USERPROFILE\.claude\skills\"
+$repo  = "$env:USERPROFILE\solak-skills"
+$skill = "solak-design-ui"
+$dest  = "$env:USERPROFILE\.claude\skills\$skill"
 
-# Tüm skill'ler
+# Hedefte eski bir KOPYA varsa, once icerigin repoda oldugunu dogrula
+if (Test-Path $dest) { Remove-Item -Recurse -Force $dest -Confirm:$false }
+
+New-Item -ItemType Junction -Path $dest -Target "$repo\skills\$skill" | Out-Null
+Get-Item $dest | Select-Object Name, LinkType, Target
+```
+
+Tüm skill'ler için:
+
+```powershell
+$repo = "$env:USERPROFILE\solak-skills"
+Get-ChildItem "$repo\skills" -Directory | ForEach-Object {
+  $dest = "$env:USERPROFILE\.claude\skills\$($_.Name)"
+  if (-not (Test-Path $dest)) { New-Item -ItemType Junction -Path $dest -Target $_.FullName | Out-Null }
+}
+```
+
+### Bağlantı — macOS / Linux
+
+```bash
+ln -s ~/solak-skills/skills/solak-design-ui ~/.claude/skills/solak-design-ui
+```
+
+### Kopya
+
+```powershell
+Copy-Item -Recurse skills\solak-design-ui "$env:USERPROFILE\.claude\skills\"
 Copy-Item -Recurse skills\* "$env:USERPROFILE\.claude\skills\"
 ```
 
-Proje bazlı kullanım için hedefi `<proje>\.claude\skills\` yap.
-
-**Skill'i geliştirirken kopyalama değil bağlantı kur.** Kopya iki yerde ayrışır: bir tarafta düzeltilen kural öbür tarafta yoktur. Dizin junction'ı elevation gerektirmez (sembolik link yönetici ister):
-
-```powershell
-New-Item -ItemType Junction `
-  -Path   "$env:USERPROFILE\.claude\skills\solak-design-ui" `
-  -Target "$env:USERPROFILE\solak-skills\skills\solak-design-ui"
+```bash
+cp -R skills/solak-design-ui ~/.claude/skills/
 ```
 
-Böylece repo tek kaynak olur; düzenleme anında kurulu skill'e yansır.
+### Doğrulama
+
+1. `~/.claude/skills/<skill>/SKILL.md` okunabiliyor mu?
+2. Yeni bir oturumda skill listesinde **açıklamasıyla** görünüyor mu?
+3. Ad görünüp açıklama görünmüyorsa frontmatter ayrıştırılamamış: satır sonlarını (LF olmalı — [`.gitattributes`](.gitattributes) bunu zorlar) ve YAML geçerliliğini kontrol et.
+4. Hiç görünmüyorsa klasör adı ile `name` aynı mı?
+
+### Ajanla kurulum
+
+Bu repoyu bir ajan kuruyorsa: **junction dene → hata alırsan symlink dene → o da olmazsa kopyala** ve kullanıcıya "kopya kuruldu, repo güncellenince tekrar kopyalanmalı" bilgisini ver. Hedefteki mevcut bir klasörü silmeden önce içeriğinin repoda bulunduğunu doğrula — kurulu kopya repodan ileride olabilir.
 
 ## Skill listesi
 
 | Skill | Amaç | Durum |
 |-------|------|-------|
 | [solak-create-skill](skills/solak-create-skill/SKILL.md) | Bu repoda standarda uygun yeni skill üretir | ✅ stable |
-| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Veri-yoğun kurumsal UI: tablo, filtre, form, dashboard | 🚧 draft |
+| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Veri-yoğun kurumsal UI: tablo, filtre, form, dashboard (kendi kendine yeten) | 🚧 draft |
 
 Güncel ve makine-okunur liste: [`registry.json`](registry.json)
 

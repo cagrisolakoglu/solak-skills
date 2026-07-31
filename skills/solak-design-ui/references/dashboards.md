@@ -69,7 +69,12 @@ Ayrıca: bir metriğin "yukarı" gitmesi her zaman iyi değildir (maliyet, arız
 
 ## Grafik işi geldiğinde
 
-Grafik tipi seçimi, kategorik/sıralı palet, eksen ve tooltip kuralları için **`dataviz` skill'ini kullan.** O bilgi burada tekrar edilmez.
+Grafik tipi, kategorik palet sınırı, eksen ve tooltip kuralları **`design-quality.md`'nin "Grafik gerekiyorsa" bölümünde.** Bu skill grafiği kendi kurallarıyla kurar; dış bir skill'e ihtiyaç duymaz.
+
+Tile içindeki grafiğe özel iki kural:
+
+- **Tile grafiği eksen taşımaz.** Tile'ın işi tek soruyu cevaplamak; eksenli, etiketli grafik ayrı bir bileşendir.
+- **Grafik sayının yerine geçmez.** Trend şekli her zaman değerle birlikte; kullanıcı tile'dan bir sayı okuyabilmeli.
 
 ## Durumlar
 

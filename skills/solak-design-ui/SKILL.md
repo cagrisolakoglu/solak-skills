@@ -1,8 +1,8 @@
 ---
 name: solak-design-ui
-description: Designs and implements data-dense enterprise UI — tables and data grids, filter and query panels, data-entry forms, and metric dashboards. Decides row/field density deliberately, aligns numbers and text by type, designs the states real data produces (empty, loading, partial, error, overflow, too-many-results), and keeps everything on the project's token layer. Tech-agnostic: semantic HTML + CSS custom properties, adapted to the detected framework. Use when the user works on a table, grid, filter panel, form, report screen or dashboard — "tabloyu düzelt", "filtre paneli tasarla", "bu ekran kalabalık", "dashboard yap" — or invokes /solak-design-ui. For marketing pages, landing pages and brand surfaces, prefer `frontend-design`.
+description: Designs and implements data-dense enterprise UI — tables and data grids, filter and query panels, data-entry forms, and metric dashboards. Decides row/field density deliberately, aligns numbers and text by type, designs the states real data produces (empty, loading, partial, error, overflow, too-many-results), and keeps everything on the project's token layer. Tech-agnostic: semantic HTML + CSS custom properties, adapted to the detected framework. Use when the user works on a table, grid, filter panel, form, report screen or dashboard — "tabloyu düzelt", "filtre paneli tasarla", "bu ekran kalabalık", "dashboard yap" — or invokes /solak-design-ui. Self-contained: carries its own quality criteria, token layer, formatting and chart rules — no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 0.3.0
+  version: 0.4.0
   author: cagrisolakoglu
   tags: [design, frontend, ui, data-dense, enterprise]
   status: draft
@@ -19,10 +19,11 @@ Veri-yoğun kurumsal yüzeyleri — tablo, filtre paneli, veri giriş formu, met
 - Gerçek verinin ürettiği durumlar eksik: boş, yükleniyor, kısmi, hata, taşma, çok fazla sonuç
 
 Bu skill'i **kullanma**:
-- Pazarlama sayfası, landing page, marka yüzeyi → `frontend-design`
-- Grafik tipi ve palet kararı → `dataviz`
-- Tasarım sistemi/token katmanının sıfırdan kurulması → ayrı ve daha geniş iş
+- Pazarlama sayfası, landing page, marka yüzeyi → kapsam dışı (`frontend-design` gibi bir pazarlama yüzeyi skill'i varsa ona)
+- Ürün genelinde tasarım sisteminin sıfırdan kurulması → ayrı ve daha geniş iş (bu skill tek yüzeyin token'larını yazar, sistemi kurmaz)
 - Sorun görsel değil davranışsalsa (veri akışı, state, bug) → doğrudan kodu düzelt
+
+Dashboard'daki grafikler **kapsam içindedir**: tip, palet, eksen ve tooltip kuralları `references/design-quality.md`'de.
 
 ## Inputs
 
@@ -46,6 +47,7 @@ Bu skill'i **kullanma**:
    - Veri giriş formu → `references/forms.md`
    - Dashboard / metrik özeti → `references/dashboards.md`
    Yüzeyden bağımsız **kesişen** referanslar:
+   - `references/design-quality.md` — her yüzeyde zorunlu: kalite ölçütü, kaçınılacak kalıplar, grafik kararları
    - `references/grid.md` — çok alanlı/çok kolonlu her yüzeyde zorunlu (yatay ritim)
    - `references/formatting.md` — sayı, tarih, birim veya para görünen her yüzeyde zorunlu
    - `references/tokens.md` — token katmanı yoksa veya mevcut katman okunacaksa
@@ -57,7 +59,7 @@ Bu skill'i **kullanma**:
 7. **Motion (varsa)** — Yalnızca `transform`, `opacity`, `clip-path`. `prefers-reduced-motion` karşılığını yaz.
 8. **Doğrula** — Aşağıdaki kapıları çalıştır, sonucu raporla. **320/768/1440 × açık/koyu ekran görüntüsü al** (`/run`, Playwright); bazı kırılmalar yalnızca görüntüde çıkar, CSS geçerli kalır ve hata vermez. Kaydırılabilir yüzeyde görüntüyü **kaydırılmış durumda** al — sticky hataları yalnızca orada görünür.
 
-Anti-template kalıpları ve genel tasarım kalitesi nitelikleri için global `web/design-quality.md` kuralı geçerlidir; burada tekrar edilmez.
+Bu skill **kendi kendine yeter**: kalite ölçütleri, kaçınılacak kalıplar, token katmanı, biçim ve grafik kuralları `references/` altındadır. Dış bir kural dosyasına veya başka bir skill'e bağlı değildir.
 
 ## Doğrulama kapıları
 
@@ -74,6 +76,7 @@ Anti-template kalıpları ve genel tasarım kalitesi nitelikleri için global `w
 - [ ] 320px'te taşma yok **ve** daralma stratejisi o genişlikte gerçekten kullanılabilir — beyan tek başına yetmez (`references/tables.md`, %40 eşiği)
 - [ ] Alanlar/kolonlar ortak grid çizgilerinden başlıyor — içerik genişlikli flex ile dizilmiş "her biri kendi genişliğinde" yerleşim yok (`references/grid.md`)
 - [ ] `readonly` ile `disabled` **koyu temada da** ayırt edilebiliyor
+- [ ] `references/design-quality.md` kaçınılacak kalıpları geçildi; gerekli niteliklerden en az beşi var
 
 **Bildirilen** — eksikse raporla, iş durmaz:
 
@@ -113,7 +116,7 @@ Doğrulama
 - Mevcut token/palet varsa onu kullan; ikinci bir sistem kurma.
 - Mevcut stil dosyalarını **okumadan üzerine yazma**.
 - Erişilebilirliği estetik uğruna feda etme — kontrast ve odak göstergesi pazarlık konusu değil.
-- Grafik tipi/palet gerektiğinde `dataviz`'e, pazarlama yüzeyinde `frontend-design`'a devret; kapsam dışına taşma.
+- Pazarlama/marka yüzeyi işine taşma; kapsam operasyonel ekranlardır. Grafik kararları kapsam içindedir ve `references/design-quality.md`'den verilir.
 - Bağımlılık ekleme (grid/UI kütüphanesi) **istenmediyse**; CSS ile çözülüyorsa CSS ile çöz.
 - **Eksik veriyi sıfır gibi gösterme.** Yanlış karara yol açar.
 
