@@ -1,0 +1,11 @@
+# Skill dosyaları LF kalmak ZORUNDA.
+# Windows'ta autocrlf açıkken checkout SKILL.md'yi CRLF'e çevirir ve
+# frontmatter ayrıştırması bozulur: skill yüklenir ama description okunmaz,
+# yani model skill'i doğru tetikleyemez. Sessiz bir kırılma — hata vermez.
+*.md   text eol=lf
+*.json text eol=lf
+*.mjs  text eol=lf
+*.sh   text eol=lf
+
+# PowerShell betikleri Windows'ta CRLF ile daha güvenli
+*.ps1  text eol=crlf
