@@ -58,9 +58,33 @@ Uzun formda ayrıca üstte özet blok: kaç hata var, her biri ilgili alana bağ
 
 Gösterilen bir değeri `disabled` yapmak okunmaz hale getirir — bilgi amaçlıysa `readonly` kullan. `disabled` bir alanın yanında neden kapalı olduğu yazılmalı: "Tesis seçilmeden birim seçilemez".
 
+### İkisini aynı griye boyamak en sık yapılan hata
+
+Her ikisine "çökmüş yüzey + soluk kenar" verilirse ayrım yalnızca metin renginde kalır, gözle görünmez. Ayrımı **üç ayrı eksene** dağıt:
+
+```css
+/* readonly = basılı değer, kontrol değil: dolgu yok, tam kontrast mürekkep */
+input[readonly] { background: transparent; border-color: var(--line); color: var(--ink-strong); }
+input[readonly]:hover { border-color: var(--line); }   /* kontrol gibi tepki vermez */
+
+/* disabled = kapalı kontrol: çökmüş dolgu + soluk mürekkep + KESİKLİ kenar */
+input[disabled], select[disabled] {
+  background: var(--surface-sunken);
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-muted);
+  cursor: not-allowed;
+}
+```
+
+Kesikli kenar süs değil, **koyu tema zorunluluğu.** Açık temada dolgu farkı işi görür; koyu temada girdi yüzeyi %27.5, kart %24, çökmüş yüzey %21 olur — üçü aynı koyu griye çıkar, parlaklık farkı yok olur. Kapalılığı renkten bağımsız bir ipucu (kesik kenar, kilit ikonu, neden metni) taşımak zorundadır. Aynı gerekçe gri tonlamalı çıktı ve düşük parlaklıklı ekran için de geçerli.
+
+Doğrulaması tek adım: **koyu temada ekran görüntüsü al, readonly ile disabled alanı yan yana karşılaştır.** Ayırt edemiyorsan kullanıcı da edemez.
+
 ## Alan genişliği içerikle eşleşir
 
 Posta kodu, vergi no, tutar gibi sabit uzunluklu alanlar **tam genişlik olmaz.** Genişlik beklenen karakter sayısını gösterir ve hata yapmayı azaltır.
+
+Bu kural kolon hizasını **bozmaz**: hücrenin sol kenarını grid belirler, `max-inline-size` alanın hücre içinde ne kadarını doldurduğunu. Görev bölüşümü için `grid.md`.
 
 ```css
 .field-postcode { inline-size: 8ch; }
@@ -85,10 +109,35 @@ Otomatik kaydediliyorsa **durumu göster**: "Kaydedildi · 14:32". Sessiz otomat
 | Durum | Tasarım |
 |-------|---------|
 | Boş form | Varsayılanlar makul ve görünür; gizli varsayılan yok |
-| Yükleniyor (mevcut kaydı getirme) | Alan iskeletleri, yükseklik gerçek alanla aynı |
+| Yükleniyor (mevcut kaydı getirme) | Alan iskeletleri, yükseklik gerçek alanla aynı — **etiket iskelet değil** |
 | Gönderiliyor | Buton meşgul durumu; form kilitli ama içerik okunur |
 | Kısmi hata (sunucu) | Hangi alanların kaydedildiği, hangilerinin kaydedilmediği açık |
 | Kaydedildi | Onay görünür ve kalıcı; kaybolan toast yeterli değil |
+
+### İskelet yalnızca bilinmeyeni gizler
+
+Etiket yüklenmiyor — zaten bilinir. Etiketi gri bir çubuğa çevirmek kullanıcıya neyin geldiğini saklar ve yükleme bitince metin belirince layout titrer.
+
+```html
+<!-- ❌ etiket de iskelet, alan ekran okuyucudan tamamen saklanmış -->
+<div class="field" aria-hidden="true">
+  <span class="skeleton-label"></span>
+  <span class="skeleton"></span>
+</div>
+
+<!-- ✅ etiket gerçek metin; yalnızca değer bekliyor -->
+<div class="field">
+  <label for="avg">Geçmiş Dönem Ortalaması (kWh)</label>
+  <div id="avg" aria-busy="true" aria-describedby="avg-hint">
+    <span class="skeleton w-index"></span>
+  </div>
+  <p class="field-hint" id="avg-hint">Son 6 dönem ortalaması getiriliyor…</p>
+</div>
+```
+
+`aria-hidden` yerine `aria-busy`: ekran okuyucu alanın var olduğunu ve beklediğini bilir. `aria-hidden` ile alan hiç yokmuş gibi davranır, veri gelince aniden ortaya çıkar.
+
+İskeletin genişliği de beklenen değere uymalı — 16ch'lik bir endeks alanı için tam genişlik iskelet, gelmeyecek bir şey vaat eder.
 
 ## Erişilebilirlik
 
