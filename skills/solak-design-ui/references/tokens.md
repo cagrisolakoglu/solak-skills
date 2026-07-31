@@ -77,8 +77,9 @@ The set below was verified by screenshot in both themes. Values are `oklch` beca
   --text-title: clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem);
   --leading-body:  1.45;
   --leading-label: 1.3;
-  --weight-body:  400;   /* floor: never below 400 in a dense surface */
-  --weight-label: 500;
+  --weight-body:   400;  /* floor: never below 400 in a dense surface */
+  --weight-label:  500;
+  --weight-strong: 600;  /* the only emphasis step — a closed set, see typography.md */
 
   /* 7 · Density — vertical rhythm (`density-and-direction.md`) */
   --field-height: 36px;
@@ -164,6 +165,8 @@ Making every number a token turns the layer into an unreadable dictionary. The t
 # hardcoded values left in components
 rg -n "#[0-9a-fA-F]{3,8}|rgba?\(|oklch\(" src/components -g '!*tokens*'
 rg -n ":\s*\d+px" src/components -g '!*tokens*'
+rg -n "font-weight: [0-9]" src/components          # weight drift (450/550/650)
+rg -n "tabular-nums(?!\s+lining)" src -P           # figure set applied by half
 ```
 
 - [ ] No palette, spacing or type constants in component files; everything via `var(--…)`
