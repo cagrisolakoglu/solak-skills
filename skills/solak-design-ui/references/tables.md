@@ -1,17 +1,17 @@
-# Tablo / Veri Grid'i
+# Table / Data Grid
 
-Yoğunluk kararı için önce `density-and-direction.md`.
+Decide density first: `density-and-direction.md`.
 
-## Hizalama tipe göre
+## Alignment by type
 
-| Veri tipi | Hizalama | Not |
-|-----------|----------|-----|
-| Metin, etiket | Sola | — |
-| Sayı, para, yüzde | **Sağa** + `font-variant-numeric: tabular-nums lining-nums` | Basamaklar dikey hizalanır, karşılaştırma mümkün olur. **Monospace kullanma** (`typography.md`) |
-| Teknik kimlik (sayaç no, EIC, UUID, hash) | Sola + **monospace** | Karakteri tek tek okunur ve dikte edilir; ölçülen sayı değildir |
-| Tarih, saat | Sola, sabit genişlik | Format tutarlı: tek tabloda karışık format yok |
-| Durum, etiket (badge) | Sola | Renk **tek gösterge olamaz** — metin veya ikon eşlik eder |
-| Eylem | Sağa, en sağ kolon | Sıralanamaz; yatay kaydırmada sticky olabilir |
+| Data type | Alignment | Note |
+|-----------|-----------|------|
+| Text, label | Left | — |
+| Number, money, percentage | **Right** + `font-variant-numeric: tabular-nums lining-nums` | Digits line up vertically, comparison becomes possible. **No monospace** (`typography.md`) |
+| Technical identifier (serial, registry code, UUID, hash) | Left + **monospace** | Read character by character and dictated; not a measured number |
+| Date, time | Left, fixed width | One format per table, never mixed |
+| Status badge | Left | Colour **cannot be the only indicator** — text or an icon accompanies it |
+| Action | Right, last column | Not sortable; may be sticky under horizontal scroll |
 
 ```css
 .cell-numeric {
@@ -20,37 +20,37 @@ Yoğunluk kararı için önce `density-and-direction.md`.
 }
 ```
 
-Sayıyı sola hizalamak veya proportional font kullanmak, tablonun tek işini — karşılaştırmayı — bozar. Başlık hücresi de gövdeyle **aynı** hizada olmalı; sağa hizalı sayı kolonunun başlığı sola hizalıysa göz iki farklı eksen takip eder.
+Left-aligning a number, or using proportional figures, breaks the one job a table has: comparison. The header cell must sit on the **same** axis as the body; if a right-aligned numeric column has a left-aligned header, the eye tracks two different edges.
 
-## Kolon önceliği ve daralma
+## Column priority and narrowing
 
-Kolonları üç önceliğe ayır: **kimlik** (hangi kayıt), **karar** (kullanıcının aradığı değer), **detay** (gerisi).
+Sort columns into three priorities: **identity** (which record), **decision** (the value the user came for), **detail** (everything else).
 
-Ekran daraldığında **kolonu sıkıştırmak yasak.** Üç meşru strateji:
+When the screen narrows, **squeezing columns is forbidden.** Three legitimate strategies:
 
-1. **Gizle** — detay kolonlarını kaldır, satır genişletmeyle erişilebilir kıl
-2. **Katla** — kimlik + karar kolonlarını iki satırlı tek hücreye topla (mobil kart görünümü)
-3. **Yatay kaydır** — kimlik kolonu sticky, gerisi kayar
+1. **Hide** — drop detail columns, make them reachable by row expansion
+2. **Fold** — collapse identity and decision columns into a single two-line cell (mobile card view)
+3. **Scroll horizontally** — identity column sticky, the rest scrolls
 
-Hangisi seçildiyse **çıktı raporunda açıkça beyan et.** Beyan edilmemiş daralma davranışı doğrulama kapısını geçmez.
+Whichever is chosen, **declare it explicitly in the report.** An undeclared narrowing behaviour does not pass the verification gate.
 
-### Yatay kaydırmanın çöktüğü eşik: kimlik bloğu > %40
+### The threshold where horizontal scrolling collapses: identity block > 40%
 
-Sticky kimlik bloğu görünür genişliğin **%40'ından fazlasını** alıyorsa strateji teknik olarak çalışır ama pratikte işe yaramaz: 320px'te 34px checkbox + 132px ad = 166px, kalan ~150px'e tek veri kolonu sığar. Kullanıcı her değeri görmek için ayrı bir kaydırma yapar.
+If the sticky identity block takes more than **40% of the visible width**, the strategy works technically but not practically: at 320px a 34px checkbox plus a 132px name is 166px, leaving ~150px for one data column. The user performs a separate scroll for every value they want to see.
 
-Bu genişlikte tek meşru seçenek **katlamadır** (2. strateji): satır bir karta döner, kimlik başlık olur, karar kolonları etiketli satırlara iner, detay kolonları "Detay" bağlantısına kalır.
+At that width the only legitimate option is **folding** (strategy 2): the row becomes a card, identity becomes the title, decision columns become labelled lines, and detail columns stay behind a "Details" link.
 
-Beyan yeterli değil: "yatay kaydırma seçildi" demek 320px'te kullanılabilir olduğunu kanıtlamaz. **Ölç:** kimlik bloğu genişliği ÷ görünür genişlik. Eşiği aşıyorsa ya bu genişlik için katlama yaz, ya yüzeyin desteklenen alt sınırını (örn. 560px) açıkça bildir.
+Declaring is not enough: saying "horizontal scroll was chosen" does not prove it is usable at 320px. **Measure it:** identity block width ÷ visible width. If it exceeds the threshold, either write the fold for that width or explicitly state the surface's supported lower bound (e.g. 560px).
 
 ## Sticky
 
-- Başlık satırı: `position: sticky; top: 0` — 15+ satırda zorunlu
-- Kimlik kolonu: yatay kaydırma varsa `position: sticky; left: 0` zorunlu
-- Sticky yüzeyin arkası **opak** olmalı; yarı saydam başlık altındaki metni okunmaz yapar
-- Sticky öğeye `z-index` ver; kesişimde (başlık × ilk kolon) köşe hücresi en üstte kalmalı
-- Sticky kimlik sınırı (dikey çizgi) yalnızca **yatay kaydırma varken** anlam taşır; kaydırma yoksa gerekçesiz bir dikey çizgidir
+- Header row: `position: sticky; top: 0` — mandatory beyond 15 rows
+- Identity column: `position: sticky; left: 0` — mandatory whenever horizontal scrolling exists
+- A sticky surface must be **opaque**; a translucent header makes the text beneath it unreadable
+- Give sticky elements a `z-index`; at the intersection (header × first column) the corner cell must stay on top
+- A sticky identity boundary (a vertical rule) only means something **while horizontal scroll exists**; without scrolling it is an unjustified vertical line
 
-### İki zorunlu tablo ayarı — yoksa sticky sessizce bozulur
+### Two mandatory table settings — without them sticky breaks silently
 
 ```css
 table {
@@ -58,171 +58,171 @@ table {
   border-collapse: separate;    /* 2 */
   border-spacing: 0;
   inline-size: 100%;
-  min-inline-size: 1216px;      /* altında yatay kaydırma başlar */
+  min-inline-size: 1216px;      /* below this, horizontal scrolling begins */
 }
 ```
 
-**1 · `table-layout: fixed` + `<colgroup>`.** `auto` düzende `td`/`th` üzerindeki `inline-size` yalnızca bir *öneridir*; tarayıcı kolonu içeriğe göre büyütür. Sticky `left` offset'i ise kesin bir sayıdır. İkisi uyuşmayınca sticky kolonun **altından kaydırılan içerik sızar** — ekranda, checkbox'ın yanında komşu kolonun son haneleri belirir.
+**1 · `table-layout: fixed` plus `<colgroup>`.** Under `auto` layout, `inline-size` on a `td`/`th` is only a *suggestion*; the browser grows the column to fit content. A sticky `left` offset, however, is an exact number. When the two disagree, **content from the scrolled columns leaks out from under the sticky column** — on screen, the trailing digits of a neighbouring column appear beside the checkbox.
 
-Aynı ayar `text-overflow: ellipsis`'i de çalışır hale getirir: `auto` düzende kolon içeriğe göre genişlediği için kırpma hiç tetiklenmez.
+The same setting is what makes `text-overflow: ellipsis` work at all: under `auto` layout the column expands to fit, so truncation never triggers.
 
 ```html
 <colgroup>
-  <col class="c-select"><col class="c-point"><col class="c-meter">…
+  <col class="c-select"><col class="c-name"><col class="c-serial">…
 </colgroup>
 ```
 
-Genişlikler tek yerde (`colgroup`) durur; sticky offset'ler aynı token'lardan türetilir:
+Widths live in one place (`colgroup`) and sticky offsets derive from the same tokens:
 
 ```css
 .c-select { inline-size: var(--w-select); }
-.c-point  { inline-size: var(--w-point); }
+.c-name   { inline-size: var(--w-name); }
 .col-select { position: sticky; left: 0; }
-.col-point  { position: sticky; left: var(--w-select); }   /* offset = önceki kolonun GERÇEK genişliği */
+.col-name   { position: sticky; left: var(--w-select); }   /* offset = the REAL width of the previous column */
 ```
 
-**2 · `border-collapse: separate`.** `collapse` ile kenarlar hücreye ait olmaz; sticky hücre kaydırılırken kenarları geride kalır ve kaybolur. Ayırıcı görevini zebra veya `::after` ile çizilen sahte kenar üstlenir.
+**2 · `border-collapse: separate`.** Under `collapse`, borders do not belong to the cell; a sticky cell leaves its borders behind as it scrolls and they disappear. The separator job is taken over by zebra striping, or by a faux border drawn with `::after`.
 
-### z-index katmanları
+### z-index layers
 
-| Katman | Öğe |
-|--------|-----|
-| 1 | Gövdedeki sticky kolonlar |
-| 2 | `thead th` ve `tfoot td` |
-| 3 | Kesişim: `thead .col-point`, `tfoot .col-point` |
+| Layer | Element |
+|-------|---------|
+| 1 | Sticky columns in the body |
+| 2 | `thead th` and `tfoot td` |
+| 3 | Intersections: `thead .col-name`, `tfoot .col-name` |
 
-Kesişim hücresi en üstte olmazsa köşede iki sticky yüzey üst üste biner ve metin okunmaz.
+If the intersection cell is not on top, two sticky surfaces overlap in the corner and the text becomes unreadable.
 
-Her sticky hücre **kendi opak dolgusunu** taşımak zorunda. Zebra kuralı `tr`'ye değil `td`'ye yazılırsa bu kendiliğinden sağlanır:
+Every sticky cell must carry **its own opaque fill.** Writing the zebra rule on `td` rather than `tr` gives this for free:
 
 ```css
 tbody tr:nth-child(even) td { background: var(--surface-zebra); }
 tbody tr:nth-child(odd)  td { background: var(--surface-card); }
 ```
 
-## Tek ayırıcı sistemi
+## One separator system
 
-Zebra şeritleri **veya** yatay çizgiler — ikisi birden değil. İkisi birlikte gürültü üretir ve hiçbiri işini yapmaz.
+Zebra striping **or** horizontal rules — never both. Together they produce noise and neither does its job.
 
-- **Zebra**: `dense` seviyede, çok kolonlu tabloda göz kaymasını engeller
-- **Çizgi**: `comfortable`/`compact` seviyede daha temiz
-- **Dikey çizgi**: yalnızca kolon grupları varsa
+- **Zebra**: at `dense`, in a many-column table, stops the eye slipping between rows
+- **Rules**: cleaner at `comfortable`/`compact`
+- **Vertical rules**: only when there are column groups
 
-Zebra kullanılıyorsa hover ve seçili durum zebradan **daha güçlü** olmalı, yoksa görünmez.
+If zebra is used, hover and selected states must be **stronger** than the zebra, or they are invisible.
 
-**Zebra deltası ≥ ~%3 açıklık.** `oklch(100%)` ile `oklch(98.2%)` arası fark ekranda kaybolur — kod zebra yazar, kullanıcı düz tablo görür. Yoğun ve çok kolonlu tabloda gözle ayırt edilebilir en az fark yaklaşık %3'tür; koyu temada da ayrıca ölç, açık temada yeten delta koyuda yetmez.
+**Zebra delta ≥ ~3% lightness.** The difference between `oklch(100%)` and `oklch(98.2%)` disappears on screen — the code says zebra, the user sees a plain table. In a dense, many-column table the smallest perceptible difference is around 3%; measure it separately in dark theme, because a delta that works in light does not necessarily work in dark.
 
-## Taşan hücre
+## Overflowing cells
 
-Uzun metin: tek satırda kısalt (`text-overflow: ellipsis`) **ve** tam değeri erişilebilir kıl — `title` özniteliği veya tooltip. Kısaltıp tam değeri hiç göstermemek veri kaybıdır.
+Long text: truncate on one line (`text-overflow: ellipsis`) **and** keep the full value reachable — a `title` attribute or tooltip. Truncating without ever exposing the full value is data loss.
 
-Kırpma yalnızca `table-layout: fixed` ile çalışır (yukarı bak). `auto` düzende kolon içeriğe göre büyür, kırpma hiç tetiklenmez.
+Truncation only works with `table-layout: fixed` (see above). Under `auto` layout the column grows to fit and truncation never fires.
 
-Satır yüksekliğini içeriğe göre büyütmek `dense`/`compact` seviyede tarama ritmini bozar; sabit yükseklik + kısaltma tercih edilir.
+Growing row height to fit content breaks the scanning rhythm at `dense`/`compact`; fixed height plus truncation is preferred.
 
-### Başlık kırpılamaz
+### Headers are never truncated
 
-`OKUMA T…` bir başlık değildir — kolonun anahtarını yok eder. Hücre kırpılır, başlık **asla**. İki çıkış yolu: kolonu başlığı alacak kadar genişlet, veya başlığı kısalt ("Okuma Tipi" → "Tip"). Kırpılmış başlık, kırpılmış hücreden çok daha pahalıdır: hücrede tek bir kaydı, başlıkta bütün kolonu okunamaz yapar.
+`READING T…` is not a header — it destroys the column's key. Cells truncate, headers **never**. Two ways out: widen the column enough for the header, or shorten the header ("Reading type" → "Type"). A truncated header is far more expensive than a truncated cell: a cell makes one record unreadable, a header makes the whole column unreadable.
 
-## Başlıkta birim ve büyük harf
+## Units and casing in headers
 
-Başlıklarda `text-transform: uppercase` yaygın bir Swiss kalıbı, ama iki şeyi sessizce bozar:
+Uppercase headers are a common Swiss pattern, but `text-transform: uppercase` silently breaks two things:
 
-**1 · Birim sembolleri.** `kWh` → `KWH` yanlıştır: `k` kilo, `W` Watt, `h` saat — büyük/küçük harf anlam taşır. `MWh`, `mA`, `kV` aynı şekilde. Birimi ayrı bir öğeye al:
+**1 · Unit symbols.** `kWh` → `KWH` is wrong: `k` is kilo, `W` is watt, `h` is hour — case carries meaning. `MB` vs `Mb` differs by a factor of eight. Put the unit in its own element:
 
 ```html
-<th class="is-num">Tüketim <span class="unit">(kWh)</span></th>
+<th class="is-num">Usage <span class="unit">(GB)</span></th>
 ```
 ```css
 th { text-transform: uppercase; }
 th .unit { text-transform: none; letter-spacing: 0; }
 ```
 
-**2 · Türkçe `i`.** `text-transform: uppercase` Türkçe kuralını yalnızca `lang="tr"` varsa uygular. Eksikse `Tip` → `TIP`, `İtirazlı` → `ITIRAZLI` olur. Kök öğede `<html lang="tr">` **zorunlu** — bu bir erişilebilirlik ayarı değil, doğru harf üretme koşulu.
+**2 · Locale-specific casing.** `text-transform: uppercase` applies locale rules only when the language is declared. Without `lang`, Turkish `i` uppercases to `I` instead of `İ` (`Tip` → `TIP`, `İtirazlı` → `ITIRAZLI`), and other locales have their own cases. A correct `lang` attribute on the root element is **mandatory** — not merely an accessibility setting but a condition for producing the right letters.
 
-## Sıralama ve seçim
+## Sorting and selection
 
-- Sıralanabilir başlık `button` olmalı (klavye erişimi)
-- **Sıralanabilirlik göstergesi hover'a bağlanamaz** — dokunmatikte hover yoktur, gösterge hiç görünmez. Kalıcı ama sessiz olsun: `opacity: 0.3` "sıralanabilir", `0.6` hover, `1` sıralanmış
-- Aktif sıralamada yön oku **ve** hangi kolon olduğu görünür kalsın; `aria-sort` özniteliğini kullan
-- Satır tıklaması ile checkbox seçimi **çakışmasın** — tıklama detaya gidiyorsa checkbox ayrı hedef olmalı
-- Toplu seçimde kaç kayıt seçildiği ve "tümünü seç" kapsamı (bu sayfa mı, tüm sonuç mu) açıkça yazılmalı
+- A sortable header must be a `button` (keyboard access)
+- **The sortability indicator cannot depend on hover** — touch has no hover, so the indicator would never appear. Keep it persistent but quiet: `opacity: 0.3` for "sortable", `0.6` on hover, `1` for "sorted"
+- With an active sort, both the direction arrow **and** which column is sorted stay visible; use `aria-sort`
+- Row click and checkbox selection must **not conflict** — if clicking navigates to detail, the checkbox needs to be a separate target
+- For bulk selection, state how many records are selected and the scope of "select all" (this page, or all results)
 
-## Hücre içi işaretçi sayı hizasını bozar
+## An in-cell marker breaks number alignment
 
-Aykırı bir değeri (endeks geri gitmiş, imkansız negatif, eşik aşımı) işaretlemek gerekir — eksi işaretini yoğun bir kolonda tek gösterge bırakmak onu kaçırılır kılar. Ama sağa hizalı bir kolonda **glif işe yaramaz**, iki denemenin ikisi de başarısız:
+An anomalous value (a balance that went backwards, an impossible negative, a threshold breach) needs marking — leaving a minus sign as the only cue in a dense column makes it easy to miss. But in a right-aligned column a **glyph does not work**; both attempts fail:
 
 ```css
-/* ❌ 1: akışa girer → sayıyı sola kaydırır, kolonun basamak hizası biter */
+/* ❌ 1: enters the flow → shifts the number left, the column's digit alignment is over */
 .is-anomaly::after { content: " ⚠"; }
 
-/* ❌ 2: akış dışına alınır → hizayı korur ama sağa hizalı kolonun boş sol
-   tarafında durur ve KOMŞU KOLONA aitmiş gibi okunur ("40 ⚠" gibi) */
+/* ❌ 2: taken out of flow → preserves alignment, but sits in the empty left side of a
+   right-aligned column and reads as belonging to the NEIGHBOURING column ("40 ⚠") */
 .is-anomaly { position: relative; }
 .is-anomaly::after { content: "⚠"; position: absolute; left: var(--cell-pad-x); }
 ```
 
-Doğru cevap **hücre vurgusu**: hizayı bozmaz, sahipliği belirsiz bırakmaz.
+The correct answer is **cell emphasis**: it neither breaks alignment nor leaves ownership ambiguous.
 
 ```css
-/* ✅ hücrenin tamamı işaretli; zebra kuralını ezmek için tr td özgüllüğü gerekir */
+/* ✅ the whole cell is marked; tr td specificity is needed to beat the zebra rule */
 tbody tr td.is-anomaly {
   background: var(--danger-quiet);
   box-shadow: inset 2px 0 0 var(--danger);
   color: var(--danger);
-  font-weight: 650;
+  font-weight: 600;
 }
 ```
 
-Renk tek gösterge olmadığı için eksi işareti ve satırın durum etiketi ("İtirazlı") eşlik etmeli; ayrıca `title` ile nedenini yaz ("Güncel endeks öncekinden küçük — sayaç değişimi veya hatalı okuma").
+Because colour is never the only indicator, the minus sign and the row's status label ("Disputed") accompany it; add a `title` explaining the cause ("Current balance is lower than previous — device replacement or misread").
 
-Aynı kural para birimi simgesi, dipnot yıldızı ve trend oku için de geçerli: sağa hizalı bir kolonda sayının yanına eklenen her karakter ya hizayı kaydırır ya sahipliği belirsizleştirir. Rakamların sağ kenarı **tek** bir dikey çizgide kalmalı; ek bilgi hücre vurgusu, ayrı kolon veya tooltip ile verilir.
+The same rule applies to currency symbols, footnote asterisks and trend arrows: in a right-aligned column, any character added beside the number either shifts the alignment or muddies ownership. The right edge of the digits must stay on **one** vertical line; extra information goes into cell emphasis, a separate column, or a tooltip.
 
-## Toplam satırı
+## The total row
 
-Varsa `position: sticky; bottom: 0`, gövdeden farklı ağırlıkta, sayı hizası gövdeyle **birebir aynı**.
+If present: `position: sticky; bottom: 0`, a different weight from the body, and number alignment **identical** to the body.
 
-Üç şeyi açıkça yaz:
+State three things explicitly:
 
-1. **Neyin toplamı** — görünen sayfa mı, filtrelenmiş tüm sonuç mu: "Toplam filtrelenmiş 412 kaydın tamamına aittir, görünen 50 satıra değil."
-2. **Neyin hariç tutulduğu** — "Okunamayan 7 nokta toplama dahil edilmedi." Eksik veriyi sıfır sayan toplam yanlış karar üretir.
-3. **Toplanmayan kolonlar** — endeks, çarpan, tarih gibi toplamı anlamsız kolonlarda `—` göster, boş bırakma. Boş hücre "hesaplanamadı" ile "toplanmaz"ı ayırt etmez.
+1. **What is being totalled** — the visible page or the whole filtered result: "The total covers all 412 filtered records, not the 50 visible rows."
+2. **What is excluded** — "7 unreadable records are not included in the total." A total that treats missing data as zero produces wrong decisions.
+3. **Columns that are not totalled** — show `—` in columns where a total is meaningless (balances, rates, dates); do not leave them blank. An empty cell does not distinguish "could not compute" from "not summable".
 
-Yuvarlama farkı (gösterilenlerin toplamı ≠ gösterilen toplam) için `formatting.md`.
+For rounding discrepancies (sum of displayed values ≠ displayed sum) see `formatting.md`.
 
-## Durumlar — hepsi tasarlanacak
+## States — design all of them
 
-| Durum | Tasarım |
-|-------|---------|
-| İlk kullanım (hiç veri yok) | Ne olduğunu açıkla + ilk eylemi öner. "Kayıt yok" yetersiz. |
-| Sonuç yok (filtre sonucu) | **İlk kullanımdan ayrı.** Hangi filtrenin gevşetileceğini öner. |
-| Yükleniyor | İskelet satırlar, yüksekliği gerçek satırla **aynı**; **başlık satırı gerçek kalır** |
-| Kısmi yükleme | Yüklenmiş satırlar görünür, devamı için gösterge |
-| Hata | Ne olduğu + tekrar dene eylemi; tabloyu boşaltıp tek satır hata yazma |
-| Tek satır | Tablo yerine detay görünümü daha uygun olabilir — sorgula |
+| State | Design |
+|-------|--------|
+| First use (no data at all) | Explain what this is and suggest the first action. "No records" is not enough. |
+| No results (from filters) | **Separate from first use.** Suggest which filter to relax. |
+| Loading | Skeleton rows at real row height; **the header row stays real** |
+| Partial load | Loaded rows visible, an indicator for the rest |
+| Error | What happened plus a retry action; do not empty the table and print one error line |
+| Single row | A detail view may suit better — ask |
 
-İlk kullanım ile "sonuç yok" durumunu aynı bileşenle çözmek en sık yapılan hatadır: kullanıcı sistemin boş mu olduğunu yoksa filtresinin mi kötü olduğunu anlayamaz.
+Solving first use and "no results" with the same component is the most common mistake here: the user cannot tell whether the system is empty or their filter is bad.
 
-Yükleme iskeletinde **kolon başlıkları yüklenmez** — bilinirler. Başlık satırını gri çubuklara çevirmek kullanıcıdan neyin geldiğini saklar ve metin belirince layout titrer. İskelet genişlikleri de kolon genişliklerine uymalı, rastgele olmamalı.
+In the loading skeleton, **column headers do not load** — they are known. Turning the header row into grey bars hides from the user what is coming, and the layout jitters when the text appears. Skeleton widths should match column widths rather than being random.
 
-## Erişilebilirlik
+## Accessibility
 
-- `<table>` + `<th scope="col">` kullan; `div` grid'i ancak sanallaştırma zorunluysa ve `role="grid"` ile
-- Klavye: `Tab` ile eylemlere ulaşılır; sıralanabilir başlıklar `button`
-- Kaydırılabilir kabın kendisi klavyeyle kaydırılabilmeli: `tabindex="0"` + `role="region"` + `aria-label`. Aksi halde yatay kaydırmadaki kolonlara yalnızca fare ulaşır
-- Sanallaştırılmış tabloda toplam satır sayısını ekran okuyucuya bildir — DOM'daki satır sayısı gerçeği yansıtmaz
-- Yalnızca hover'da görünen eylem **klavyeyle erişilemez**; `focus-within` ile de görünür olmalı
+- Use `<table>` with `<th scope="col">`; a `div` grid only when virtualisation demands it, and then with `role="grid"`
+- Keyboard: actions reachable by `Tab`; sortable headers are `button`s
+- The scroll container itself must be keyboard scrollable: `tabindex="0"` + `role="region"` + `aria-label`. Otherwise only a mouse can reach the columns behind a horizontal scroll
+- In a virtualised table, announce the total row count to screen readers — the DOM row count does not reflect reality
+- An action visible only on hover is **unreachable by keyboard**; make it visible on `focus-within` too
 
-## Doğrulama
+## Verification
 
-- [ ] `table-layout: fixed` + `colgroup`; sticky offset'ler kolon genişlik token'larından türüyor
+- [ ] `table-layout: fixed` + `colgroup`; sticky offsets derived from the column width tokens
 - [ ] `border-collapse: separate`
-- [ ] **Kaydırılmış durumda** ekran görüntüsü alındı: sticky kolonun altından içerik sızmıyor
-- [ ] z-index katmanları: gövde sticky 1, thead/tfoot 2, kesişim 3
-- [ ] Zebra deltası her iki temada gözle görünür (≥ ~%3)
-- [ ] Hiçbir başlık kırpılmıyor
-- [ ] Birim sembolleri büyük harfe çevrilmemiş; `<html lang="tr">` var
-- [ ] Sıralama göstergesi hover'sız görünüyor
-- [ ] Sayı kolonunda tüm rakamların sağ kenarı aynı çizgide (işaretçiler akış dışında)
-- [ ] Toplam: neyin toplamı, ne hariç, hangi kolonlar toplanmıyor — üçü de yazılı
-- [ ] Kimlik bloğu / görünür genişlik oranı ölçüldü; %40'ı aşan genişlikte katlama var veya alt sınır beyan edildi
+- [ ] Screenshot taken **while scrolled**: nothing leaks from under the sticky column
+- [ ] z-index layers: body sticky 1, thead/tfoot 2, intersection 3
+- [ ] Zebra delta perceptible in both themes (≥ ~3%)
+- [ ] No header truncated
+- [ ] Unit symbol casing preserved; a correct `lang` attribute on the root element
+- [ ] Sort indicator visible without hover
+- [ ] In numeric columns every digit's right edge is on the same line (markers out of flow or replaced by cell emphasis)
+- [ ] Total row: what is summed, what is excluded, which columns are not summable — all three stated
+- [ ] Identity block ÷ visible width measured; at widths exceeding 40% a fold exists or a lower bound is declared

@@ -1,73 +1,75 @@
-# Veri Giriş Formu
+# Data-Entry Form
 
-## Gruplama ve ritim
+## Grouping and rhythm
 
-Alanları anlamsal gruplara ayır (`fieldset` + `legend`); grup arası boşluk alan arası boşluğun **en az iki katı**. Tek tip aralık, uzun formu okunmaz bir liste yapar.
+Split fields into semantic groups (`fieldset` + `legend`); spacing between groups is **at least twice** the spacing between fields. Uniform spacing turns a long form into an unreadable list.
 
 ```css
 .form-field { margin-block-end: var(--space-field); }  /* 16px */
 .form-group { margin-block-end: var(--space-group); }  /* 40px */
 ```
 
-## Etiket üstte
+Grouping is expressed by **space and a group label**, not by a box around each group. A form where every group is a card has no hierarchy, only frames (`design-quality.md`).
 
-Etiket alanın üstünde, sola hizalı. Tarama hızı en yüksek yerleşim budur ve uzun etiketlerde bozulmaz.
+## Labels above
 
-Sol yerleşim (etiket solda, alan sağda) kolon genişliğini etikete esir eder. Yer içi (placeholder) etiket ise **etiket değildir** — odaklanınca kaybolur, kullanıcı ne girdiğini doğrulayamaz. Placeholder yalnızca biçim ipucu için: `GG.AA.YYYY`.
+Label above the field, left-aligned. This is the fastest layout to scan and it does not break with long labels.
 
-## Zorunluluk işaretlemesi
+A left-side layout (label left, field right) holds the column width hostage to the label. A placeholder label is **not a label** — it disappears on focus and the user cannot verify what they entered. Placeholders are for format hints only: `DD.MM.YYYY`.
 
-**Alanların çoğu zorunluysa, isteğe bağlı olanı işaretle** — tersi değil. Her alanın yanında yıldız görmek hiçbir bilgi taşımaz.
+## Marking requiredness
+
+**If most fields are required, mark the optional ones** — not the other way round. A star beside every field carries no information.
 
 ```html
-<label for="note">Not <span class="field-optional">(isteğe bağlı)</span></label>
+<label for="note">Note <span class="field-optional">(optional)</span></label>
 ```
 
-## Doğrulama zamanlaması
+## Validation timing
 
-- **`blur`'da doğrula** — her tuş vuruşunda değil. Yazarken hata göstermek kullanıcıyı cümlesinin ortasında suçlar.
-- Bir alan hatalıysa ve kullanıcı düzeltiyorsa, doğru hale geldiği anda hatayı **kaldır** — bu durumda anlık geri bildirim doğrudur.
-- Gönderimde tüm hataları göster ve ilk hataya odaklan.
-- Sunucu tarafı doğrulama sonucu da aynı yere, aynı biçimde düşmeli; ayrı bir hata kanalı kurma.
+- **Validate on `blur`** — not on every keystroke. Showing an error mid-typing accuses the user in the middle of their sentence.
+- If a field is in error and the user is fixing it, **clear the error the moment it becomes valid** — here immediate feedback is correct.
+- On submit, show all errors and focus the first one.
+- Server-side validation results land in the same place, in the same form; do not build a second error channel.
 
-## Hata mesajı
+## Error messages
 
-Alanın **altında**, alana `aria-describedby` ile bağlı, ne yapılacağını söyleyen tonda.
+**Below** the field, tied to it with `aria-describedby`, phrased as what to do.
 
 | ❌ | ✅ |
 |----|-----|
-| "Geçersiz değer" | "Tarih GG.AA.YYYY biçiminde olmalı" |
-| "Hata: alan zorunlu" | "Tesis seçilmeli" |
-| "Format hatalı" | "Vergi numarası 10 haneli olmalı — şu an 9 hane" |
+| "Invalid value" | "Date must be in DD.MM.YYYY format" |
+| "Error: field required" | "Select a customer" |
+| "Format error" | "Tax ID must be 10 digits — currently 9" |
 
 ```html
 <input id="tax" aria-describedby="tax-error" aria-invalid="true">
-<p id="tax-error" class="field-error">Vergi numarası 10 haneli olmalı — şu an 9 hane.</p>
+<p id="tax-error" class="field-error">Tax ID must be 10 digits — currently 9.</p>
 ```
 
-Hata rengi tek gösterge olamaz: ikon veya metin eşlik etmeli.
+Error colour cannot be the only indicator: an icon or text must accompany it.
 
-Uzun formda ayrıca üstte özet blok: kaç hata var, her biri ilgili alana bağlantı.
+In a long form, also add a summary block at the top: how many errors, each linking to its field.
 
-## disabled ile read-only ayrımı
+## disabled vs read-only
 
-| Durum | Ne demek | Görsel |
-|-------|----------|--------|
-| `disabled` | Şu an değiştirilemez, **nedeni belirtilmeli** | Soluk, odaklanılamaz |
-| `readonly` | Değer bilgi olarak var, değiştirilemez | Normal kontrast, odaklanılabilir, kopyalanabilir |
+| State | Meaning | Visual |
+|-------|---------|--------|
+| `disabled` | Cannot be changed right now, **and the reason must be stated** | Faded, not focusable |
+| `readonly` | The value exists as information, cannot be changed | Normal contrast, focusable, copyable |
 
-Gösterilen bir değeri `disabled` yapmak okunmaz hale getirir — bilgi amaçlıysa `readonly` kullan. `disabled` bir alanın yanında neden kapalı olduğu yazılmalı: "Tesis seçilmeden birim seçilemez".
+Making a displayed value `disabled` renders it unreadable — if it is there to be read, use `readonly`. Beside a `disabled` field, write why it is closed: "Select a customer before choosing a plan".
 
-### İkisini aynı griye boyamak en sık yapılan hata
+### Painting both the same grey is the most common mistake
 
-Her ikisine "çökmüş yüzey + soluk kenar" verilirse ayrım yalnızca metin renginde kalır, gözle görünmez. Ayrımı **üç ayrı eksene** dağıt:
+If both get "sunken surface plus faded border", the distinction survives only in text colour and is invisible. Spread the distinction across **three axes**:
 
 ```css
-/* readonly = basılı değer, kontrol değil: dolgu yok, tam kontrast mürekkep */
+/* readonly = a printed value, not a control: no fill, full-contrast ink */
 input[readonly] { background: transparent; border-color: var(--line); color: var(--ink-strong); }
-input[readonly]:hover { border-color: var(--line); }   /* kontrol gibi tepki vermez */
+input[readonly]:hover { border-color: var(--line); }   /* does not respond like a control */
 
-/* disabled = kapalı kontrol: çökmüş dolgu + soluk mürekkep + KESİKLİ kenar */
+/* disabled = a closed control: sunken fill + faded ink + DASHED border */
 input[disabled], select[disabled] {
   background: var(--surface-sunken);
   border: 1px dashed var(--line-strong);
@@ -76,73 +78,75 @@ input[disabled], select[disabled] {
 }
 ```
 
-Kesikli kenar süs değil, **koyu tema zorunluluğu.** Açık temada dolgu farkı işi görür; koyu temada girdi yüzeyi %27.5, kart %24, çökmüş yüzey %21 olur — üçü aynı koyu griye çıkar, parlaklık farkı yok olur. Kapalılığı renkten bağımsız bir ipucu (kesik kenar, kilit ikonu, neden metni) taşımak zorundadır. Aynı gerekçe gri tonlamalı çıktı ve düşük parlaklıklı ekran için de geçerli.
+The dashed border is not decoration, it is a **dark-theme necessity.** In light theme the fill difference does the work; in dark theme the input surface sits at 27.5%, the card at 24% and the sunken surface at 21% — all three resolve to the same dark grey and the brightness difference vanishes. Closedness has to be carried by a colour-independent cue (dashed border, lock icon, reason text). The same argument applies to greyscale printouts and dim screens.
 
-Doğrulaması tek adım: **koyu temada ekran görüntüsü al, readonly ile disabled alanı yan yana karşılaştır.** Ayırt edemiyorsan kullanıcı da edemez.
+Verification is one step: **take a dark-theme screenshot and compare a readonly and a disabled field side by side.** If you cannot tell them apart, neither can the user.
 
-## Alan genişliği içerikle eşleşir
+## Field width matches content
 
-Posta kodu, vergi no, tutar gibi sabit uzunluklu alanlar **tam genişlik olmaz.** Genişlik beklenen karakter sayısını gösterir ve hata yapmayı azaltır.
+Fixed-length fields such as postcode, tax ID or amount are **never full width.** The width communicates the expected character count and reduces mistakes.
 
-Bu kural kolon hizasını **bozmaz**: hücrenin sol kenarını grid belirler, `max-inline-size` alanın hücre içinde ne kadarını doldurduğunu. Görev bölüşümü için `grid.md`.
+This does not break column alignment: the grid decides the cell's left edge, `max-inline-size` decides how much of the cell the field fills. Division of labour in `grid.md`.
 
 ```css
-.field-postcode { inline-size: 8ch; }
-.field-amount   { inline-size: 12ch; font-variant-numeric: tabular-nums; text-align: right; }
+.field-postcode { max-inline-size: 8ch; }
+.field-amount   { max-inline-size: 12ch; font-variant-numeric: tabular-nums lining-nums; text-align: right; }
 .field-name     { inline-size: 100%; max-inline-size: 40ch; }
 ```
 
-## Eylem hiyerarşisi
+Note the cell carrying help or error text needs its own measure (≥ ~34ch) even when the input inside it stays narrow — see `grid.md`.
 
-- Birincil eylem (Kaydet) vurgulu ve **tek**
-- İkincil (İptal) düşük vurgulu; birincilin yanında ama yanlışlıkla tıklanmayacak mesafede
-- **Yıkıcı eylem (Sil) ayrı yerde**, birincilin yanında değil; onay ister
-- Uzun formda kaydet sticky olabilir; o zaman kaydedilmemiş değişiklik göstergesi de olmalı
-- Gönderim sırasında butonu devre dışı bırak ve durumu göster — çift gönderimi engelle
+## Action hierarchy
 
-## Otomatik kaydetme
+- The primary action (Save) is emphasised and **singular**
+- Secondary (Cancel) is low-emphasis; beside the primary but far enough not to be hit by accident
+- **The destructive action (Delete) lives elsewhere**, not next to the primary; it asks for confirmation
+- In a long form the save action may be sticky; then an unsaved-changes indicator must exist too
+- During submission, disable the button and show the state — prevent double submission
 
-Otomatik kaydediliyorsa **durumu göster**: "Kaydedildi · 14:32". Sessiz otomatik kayıt, kullanıcının işinin kaybolduğunu düşünmesine yol açar. Açık kaydetme varsa, kaydedilmemiş değişiklikle sayfadan ayrılma uyarısı ver.
+## Auto-save
 
-## Durumlar
+If saving happens automatically, **show the state**: "Saved · 14:32". Silent auto-save makes users believe their work was lost. With explicit saving, warn before leaving the page with unsaved changes.
 
-| Durum | Tasarım |
-|-------|---------|
-| Boş form | Varsayılanlar makul ve görünür; gizli varsayılan yok |
-| Yükleniyor (mevcut kaydı getirme) | Alan iskeletleri, yükseklik gerçek alanla aynı — **etiket iskelet değil** |
-| Gönderiliyor | Buton meşgul durumu; form kilitli ama içerik okunur |
-| Kısmi hata (sunucu) | Hangi alanların kaydedildiği, hangilerinin kaydedilmediği açık |
-| Kaydedildi | Onay görünür ve kalıcı; kaybolan toast yeterli değil |
+## States
 
-### İskelet yalnızca bilinmeyeni gizler
+| State | Design |
+|-------|--------|
+| Empty form | Defaults are sensible and visible; no hidden defaults |
+| Loading (fetching an existing record) | Field skeletons at real field height — **the label is not a skeleton** |
+| Submitting | Button busy state; form locked but content still readable |
+| Partial failure (server) | Clear which fields saved and which did not |
+| Saved | Confirmation visible and persistent; a vanishing toast is not enough |
 
-Etiket yüklenmiyor — zaten bilinir. Etiketi gri bir çubuğa çevirmek kullanıcıya neyin geldiğini saklar ve yükleme bitince metin belirince layout titrer.
+### A skeleton hides only the unknown
+
+The label is not loading — it is already known. Turning it into a grey bar hides from the user what is coming, and the layout jitters when the text appears.
 
 ```html
-<!-- ❌ etiket de iskelet, alan ekran okuyucudan tamamen saklanmış -->
+<!-- ❌ label is a skeleton too, and the field is hidden from screen readers entirely -->
 <div class="field" aria-hidden="true">
   <span class="skeleton-label"></span>
   <span class="skeleton"></span>
 </div>
 
-<!-- ✅ etiket gerçek metin; yalnızca değer bekliyor -->
+<!-- ✅ real label; only the value is pending -->
 <div class="field">
-  <label for="avg">Geçmiş Dönem Ortalaması (kWh)</label>
+  <label for="avg">Trailing average (GB)</label>
   <div id="avg" aria-busy="true" aria-describedby="avg-hint">
     <span class="skeleton w-index"></span>
   </div>
-  <p class="field-hint" id="avg-hint">Son 6 dönem ortalaması getiriliyor…</p>
+  <p class="field-hint" id="avg-hint">Fetching the last 6 periods…</p>
 </div>
 ```
 
-`aria-hidden` yerine `aria-busy`: ekran okuyucu alanın var olduğunu ve beklediğini bilir. `aria-hidden` ile alan hiç yokmuş gibi davranır, veri gelince aniden ortaya çıkar.
+`aria-busy` instead of `aria-hidden`: the screen reader knows the field exists and is pending. With `aria-hidden` the field behaves as if it does not exist and then appears out of nowhere when data arrives.
 
-İskeletin genişliği de beklenen değere uymalı — 16ch'lik bir endeks alanı için tam genişlik iskelet, gelmeyecek bir şey vaat eder.
+The skeleton's width should also match the expected value — a full-width skeleton for a 16-character field promises something that will not arrive.
 
-## Erişilebilirlik
+## Accessibility
 
-- Her alan `label` ile `for`/`id` üzerinden bağlı
-- Hata `aria-describedby` + `aria-invalid`
-- Grup `fieldset`/`legend`
-- Klavye ile baştan sona doldurulabilir; odak sırası görsel sırayla aynı
-- Otomatik odak yalnızca formun tek işi olduğu ekranda; yoksa ekran okuyucu kullanıcısını bağlamdan koparır
+- Every field tied to a `label` via `for`/`id`
+- Errors via `aria-describedby` + `aria-invalid`
+- Groups via `fieldset`/`legend`
+- Fillable from start to end by keyboard; focus order matches visual order
+- Autofocus only on a screen whose single job is the form; otherwise it tears a screen-reader user out of context

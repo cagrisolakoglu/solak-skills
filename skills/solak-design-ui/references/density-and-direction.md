@@ -1,60 +1,61 @@
-# Yoğunluk ve Yön
+# Density and Direction
 
-Veri-yoğun UI'da **yoğunluk kararı yön seçiminden daha belirleyicidir.** Aynı tablo `comfortable` ile `dense` arasında farklı bir üründür. Bu kararı önce ver.
+In data-dense UI the **density decision matters more than the style direction.** The same table is a different product at `comfortable` than at `dense`. Make this call first.
 
-## Yoğunluk ölçeği
+## The density scale
 
-| Seviye | Satır/alan yüksekliği | Gövde metni | Ne zaman |
-|--------|----------------------|-------------|----------|
-| `comfortable` | 44px | 15-16px | < 20 kayıt, okuma odaklı, dokunmatik kullanım |
-| `compact` | 36px | 14px | 20-100 kayıt, karışık kullanım (varsayılan) |
-| `dense` | 28px | 13px + `tabular-nums` | 100+ kayıt, tarama ve karşılaştırma odaklı |
+| Level | Row / field height | Body text | When |
+|-------|--------------------|-----------|------|
+| `comfortable` | 44px | 15-16px | < 20 records, reading-oriented, touch use |
+| `compact` | 36px | 14px | 20-100 records, mixed use (default) |
+| `dense` | 28px | 13px + tabular lining figures | 100+ records, scanning and comparison |
 
 ```css
 :root {
-  /* compact — varsayılan */
+  /* compact — default */
   --row-height: 36px;
   --row-padding-x: 12px;
   --text-body: 0.875rem;
-  --table-border: 1px solid oklch(88% 0 0);
 }
 
 [data-density="comfortable"] { --row-height: 44px; --row-padding-x: 16px; --text-body: 0.9375rem; }
 [data-density="dense"]       { --row-height: 28px; --row-padding-x: 8px;  --text-body: 0.8125rem; }
 ```
 
-Yoğunluk bir **token seviyesi**, tek tek komponent kararı değil. Kullanıcıya seçtirilecekse `data-density` özniteliği kök yüzeyde değişir; komponentler hesabı token'dan alır.
+Density is a **token level**, not a per-component decision. If the user gets to choose it, the `data-density` attribute changes on the root surface and components read their measurements from tokens. If adding a density level means touching components, the token layer has leaked.
 
-## Seviye nasıl seçilir
+## Choosing the level
 
-Üç soru:
+Three questions:
 
-1. **Kaç kayıt gösterilecek?** Tipik durumda ve en kötü durumda.
-2. **Kullanıcı tarıyor mu, okuyor mu?** Tarama (bir değeri bulmak, satırları karşılaştırmak) yoğunluğu artırır; okuma azaltır.
-3. **Hangi ekran ve girdi?** Dokunmatik veya sahada kullanım en az `comfortable` gerektirir — dokunma hedefi ≥ 44px.
+1. **How many records will be shown?** Typical case and worst case.
+2. **Is the user scanning or reading?** Scanning (finding one value, comparing rows) raises density; reading lowers it.
+3. **Which screen and input?** Touch or field use requires at least `comfortable` — touch targets ≥ 44px.
 
-Cevaplar bilinmiyorsa **sor.** Varsayılana kaçmak bu skill'in engellemek için var olduğu şey.
+If the answers are unknown, **ask.** Falling back to a default is the thing this skill exists to prevent.
 
-Sorular çelişirse (500 kayıt ama dokunmatik saha kullanımı) çakışmayı kullanıcıya söyle ve bir taraf seç: dokunma hedefi erişilebilirlik kısıtıdır, yoğunluk tercihtir — kısıt kazanır.
+When the answers conflict (500 records, but touch use in the field), name the conflict for the user and pick a side: touch target size is an accessibility constraint, density is a preference — the constraint wins.
 
-## Temel ilke: yoğunluk sıkıştırma değildir
+## Core principle: density is not compression
 
-Satır yüksekliği düşerken şunlar **artmak** zorunda:
+As row height goes down, these must go **up**:
 
-- **Hizalama disiplini** — `dense`'te göz kaymasını önleyen tek şey sütun hizasıdır
-- **Ayırıcı netliği** — yükseklik azaldıkça satırları ayıran ipucu güçlenmeli
-- **Sayı okunurluğu** — `tabular-nums` `dense`'te zorunlu, opsiyonel değil
+- **Alignment discipline** — at `dense`, column alignment is the only thing keeping the eye from slipping between rows
+- **Separator clarity** — as height shrinks, the cue dividing rows must get stronger
+- **Number legibility** — tabular lining figures are mandatory at `dense`, not optional
 
-Sadece padding kısıp font küçültmek yoğunluk değil, okunmazlıktır.
+Cutting padding and shrinking type is not density, it is illegibility (`typography.md`, rule 8).
 
-## Üç yön
+## Three directions
 
-| Yön | Ne zaman | Tipografi | Renk | Kompozisyon |
-|-----|----------|-----------|------|-------------|
-| **Swiss / International** (varsayılan) | Operasyonel ekran: tablo, filtre, form | Tek grotesk aile, ağırlıkla hiyerarşi | Nötr + tek işlevsel accent + semantik durum renkleri | Katı kolon grid, sola hizalı |
-| **Editorial-dense** | Rapor, analiz, anlatı taşıyan ekran | Serif başlık + grotesk gövde/veri | Kağıt yüzey, koyu mürekkep, tek accent | Asimetrik: anlatı kolonu + veri bloğu |
-| **Bento** | Metrik özeti, dashboard | Kompakt, sayı odaklı, tabular figür | Nötr yüzey + semantik eşik renkleri | **Eşit olmayan** hücreler (2x1, 1x2, 2x2) |
+| Direction | When | Typography | Colour | Composition |
+|-----------|------|------------|--------|-------------|
+| **Swiss / International** (default) | Operational screens: tables, filters, forms | One grotesque family, hierarchy by weight | Neutral + one functional accent + semantic status colours | Strict column grid, left-aligned |
+| **Editorial-dense** | Reports, analysis, screens carrying a narrative | Serif headings + grotesque body and data | Paper surface, dark ink, one accent | Asymmetric: narrative column plus data block |
+| **Bento** | Metric summaries, dashboards | Compact, number-led, tabular figures | Neutral surface + semantic threshold colours | **Unequal** cells (2x1, 1x2, 2x2) |
 
-Yönü kullanıcıya **onaylat**; geri alınması pahalı karardır. Karanlık tema varsayılan değildir — ürünün istediği neyse o.
+**Restraint is the default posture** and Swiss is its usual expression. Something more expressive is legitimate, but argue it against the three questions in `design-quality.md`.
 
-Bir ekranda tek yön. Tablo Swiss, üstündeki özet bento ise bu iki yön değil, bir yön içinde iki bileşendir: ortak token, ortak tipografi, yalnızca kompozisyon farkı.
+Get the direction **approved**; it is expensive to reverse. Dark theme is not a default — it is whatever the product wants.
+
+One direction per screen. A Swiss table with a bento summary above it is not two directions but two components inside one: shared tokens, shared typography, only composition differs.
