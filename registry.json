@@ -17,10 +17,10 @@
     {
       "name": "solak-design-ui",
       "path": "skills/solak-design-ui",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "draft",
-      "tags": ["design", "frontend", "ui", "css"],
-      "description": "Designs and implements distinctive, production-grade UI: commits to a style direction, defines palette and type pairing, builds hierarchy and rhythm, ships responsive accessible code with designed interaction states."
+      "tags": ["design", "frontend", "ui", "data-dense", "enterprise"],
+      "description": "Designs and implements data-dense enterprise UI: tables and data grids, filter panels, data-entry forms and metric dashboards. Decides density deliberately, designs real-data states, stays on the project's token layer."
     }
   ]
 }

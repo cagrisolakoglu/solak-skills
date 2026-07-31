@@ -180,6 +180,16 @@ Düz kontrol listesi ikiye ayrılır, çünkü maddeler aynı ağırlıkta deği
 4. Pazarlama yüzeyi istendiğinde `frontend-design`'a devrettiği sınanır.
 5. Gerçek bir ekranda uçtan uca çalıştırılır. Geçerse `status: stable`.
 
+## Uygulama durumu (2026-07-31)
+
+Task 1-7 tamamlandı; Task 8'in yapısal kontrolleri ve kurulum adımı geçti. `status: draft` **korunuyor**, çünkü şu üç sınama henüz yapılmadı:
+
+- **Pozitif tetikleme** — skill adı anılmadan doğal bir istekle ("bu tabloda 400 kayıt var, hiç okunmuyor") devreye giriyor mu. Yeni bir oturum gerektiriyor; mevcut oturumda skill listesi tazelenmiyor.
+- **Negatif devir** — "landing page tasarla" isteğinde devreye girmeyip `frontend-design`'a bırakıyor mu.
+- **Uçtan uca gerçek kullanım** — gerçek bir ekranda yoğunluk kararı, yön onayı ve bloklayan kapıların raporlanması.
+
+Üçü de geçmeden `stable`'a çekilmemeli.
+
 ## Açık konular
 
 - **`solak-design-system` gerekecek mi:** token katmanının sıfırdan kurulması bu skill'in kapsamı dışında bırakıldı. Mevcut token'ı olmayan bir projede bu skill token yazmak zorunda kalıyor — ilk gerçek kullanımda bunun yeterli olup olmadığı görülecek.

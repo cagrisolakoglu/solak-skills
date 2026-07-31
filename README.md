@@ -39,7 +39,7 @@ Proje bazlı kullanım için hedefi `<proje>\.claude\skills\` yap.
 | Skill | Amaç | Durum |
 |-------|------|-------|
 | [solak-create-skill](skills/solak-create-skill/SKILL.md) | Bu repoda standarda uygun yeni skill üretir | ✅ stable |
-| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Jenerik olmayan, üretim kalitesinde UI tasarlar ve kodlar | 🚧 draft |
+| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Veri-yoğun kurumsal UI: tablo, filtre, form, dashboard | 🚧 draft |
 
 Güncel ve makine-okunur liste: [`registry.json`](registry.json)
 
