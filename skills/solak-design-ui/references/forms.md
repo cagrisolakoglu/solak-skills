@@ -62,6 +62,8 @@ Gösterilen bir değeri `disabled` yapmak okunmaz hale getirir — bilgi amaçl�
 
 Posta kodu, vergi no, tutar gibi sabit uzunluklu alanlar **tam genişlik olmaz.** Genişlik beklenen karakter sayısını gösterir ve hata yapmayı azaltır.
 
+Bu kural kolon hizasını **bozmaz**: hücrenin sol kenarını grid belirler, `max-inline-size` alanın hücre içinde ne kadarını doldurduğunu. Görev bölüşümü için `grid.md`.
+
 ```css
 .field-postcode { inline-size: 8ch; }
 .field-amount   { inline-size: 12ch; font-variant-numeric: tabular-nums; text-align: right; }

@@ -46,8 +46,9 @@ Bu skill'i **kullanma**:
    - Veri giriş formu → `references/forms.md`
    - Dashboard / metrik özeti → `references/dashboards.md`
 3. **Yoğunluğu karara bağla** — `references/density-and-direction.md`: `comfortable` / `compact` / `dense`. Karar üç sorudan çıkar (kayıt sayısı, tarama mı okuma mı, ekran ve girdi). Gerekçeyi çıktı raporunda yaz.
+   Yoğunluk **dikey** ritmi kurar; yatay ritim için `references/grid.md` de zorunlu okumadır. Çok alanlı/çok kolonlu her yüzeyde ikisi birlikte karara bağlanır.
 4. **Yön seç** — Aynı referanstan üç yön (Swiss / editorial-dense / bento). Tek cümleyle gerekçelendir ve **kullanıcıya onaylat**. Karanlık temayı varsayma.
-5. **Token'ları kullan veya yaz** — Mevcut token katmanı varsa **onu kullan**, paralel sistem kurma. Yoksa palet, type scale, spacing, yoğunluk, duration/easing'i CSS custom property olarak tanımla.
+5. **Token'ları kullan veya yaz** — Mevcut token katmanı varsa **onu kullan**, paralel sistem kurma. Yoksa palet, type scale, spacing, yoğunluk, **kolon sayısı ve oluk**, duration/easing'i CSS custom property olarak tanımla.
 6. **Kodla** — Semantik HTML (`table`/`th`/`fieldset`/`label`, generic `div` yığını değil). Yüzey referansındaki durumların **hepsi** ve etkileşim state'leri: hover, `focus-visible`, active, disabled/readonly, seçili.
 7. **Motion (varsa)** — Yalnızca `transform`, `opacity`, `clip-path`. `prefers-reduced-motion` karşılığını yaz.
 8. **Doğrula** — Aşağıdaki kapıları çalıştır, sonucu raporla. Mümkünse 320/768/1440 ekran görüntüsü al (`/run`, Playwright).
@@ -65,6 +66,7 @@ Anti-template kalıpları ve genel tasarım kalitesi nitelikleri için global `w
 - [ ] Sayılar `tabular-nums` ve sağa hizalı
 - [ ] Komponentte hardcoded palet / spacing / type değeri yok
 - [ ] 320px'te taşma yok **veya** daralma stratejisi açıkça beyan edilmiş
+- [ ] Alanlar/kolonlar ortak grid çizgilerinden başlıyor — içerik genişlikli flex ile dizilmiş "her biri kendi genişliğinde" yerleşim yok (`references/grid.md`)
 
 **Bildirilen** — eksikse raporla, iş durmaz:
 
