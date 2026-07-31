@@ -72,6 +72,21 @@ The same setting is what makes `text-overflow: ellipsis` work at all: under `aut
 </colgroup>
 ```
 
+**`fixed` layout has a cost: every column now needs an explicit width, and the table needs a `min-inline-size`.** A column left without a width receives whatever remains — and when the declared widths already exceed the container, that remainder is **zero and the column vanishes**. No ellipsis, no scrollbar, no error: the data is simply gone from the screen. The failure appears only at narrow widths, so it survives every desktop review.
+
+```css
+/* ❌ one column has no width; below ~490px it disappears entirely */
+table { table-layout: fixed; inline-size: 100%; }
+
+/* ✅ a floor for the table; the container scrolls instead of starving a column */
+table { table-layout: fixed; inline-size: 100%; min-inline-size: 640px; }
+.table-scroll { overflow-x: auto; }
+```
+
+Rule: under `fixed` layout, `colgroup` covers **every** column, and `min-inline-size` is the sum of those widths. Then narrowing produces a scrollbar — a visible, recoverable state — rather than silent data loss.
+
+Any horizontally scrolling container also needs a **visible cue** that content continues; an edge fade on the scroller is enough and costs no layout. Without it users do not learn there is more to the right, and a truncated name reads as the whole value.
+
 Widths live in one place (`colgroup`) and sticky offsets derive from the same tokens:
 
 ```css
@@ -215,7 +230,9 @@ In the loading skeleton, **column headers do not load** — they are known. Turn
 
 ## Verification
 
-- [ ] `table-layout: fixed` + `colgroup`; sticky offsets derived from the column width tokens
+- [ ] `table-layout: fixed` + `colgroup` covering **every** column; `min-inline-size` set so narrowing scrolls instead of starving a column
+- [ ] Horizontal scroll has a visible cue (edge fade or persistent scrollbar)
+- [ ] Sticky offsets derived from the column width tokens
 - [ ] `border-collapse: separate`
 - [ ] Screenshot taken **while scrolled**: nothing leaks from under the sticky column
 - [ ] z-index layers: body sticky 1, thead/tfoot 2, intersection 3
