@@ -145,7 +145,7 @@ Kullanıcı tercihi varsa media query'yi tek kaynak yapma:
 ## Token olmayan şeyler
 
 - Tek komponentte bir kez kullanılan ölçü — orada dursun
-- İçerikten gelen renk (grafik serisi paleti → `dataviz`)
+- İçerikten gelen renk (grafik serisi paleti → `design-quality.md`, semantik durum renklerinden türetilir)
 - Yüzeye özgü kompozisyon ölçüsü (bir tile'ın span'i)
 
 Her sayıyı token yapmak katmanı okunmaz bir sözlüğe çevirir. Ölçüt: **iki farklı yerde aynı kararı vermek gerekiyorsa token.**
