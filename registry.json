@@ -17,10 +17,10 @@
     {
       "name": "solak-design-ui",
       "path": "skills/solak-design-ui",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "status": "draft",
       "tags": ["design", "frontend", "ui", "data-dense", "enterprise"],
-      "description": "Designs and implements data-dense enterprise UI: tables and data grids, filter panels, data-entry forms and metric dashboards. Decides density deliberately, designs real-data states, stays on the project's token layer."
+      "description": "Designs and implements data-dense enterprise UI: tables and data grids, filter panels, data-entry forms and metric dashboards. Decides density and column grid deliberately, formats numbers, dates and units for the product locale, designs real-data states, and stays on the project's token layer."
     }
   ]
 }

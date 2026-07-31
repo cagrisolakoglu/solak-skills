@@ -34,6 +34,16 @@ Copy-Item -Recurse skills\* "$env:USERPROFILE\.claude\skills\"
 
 Proje bazlı kullanım için hedefi `<proje>\.claude\skills\` yap.
 
+**Skill'i geliştirirken kopyalama değil bağlantı kur.** Kopya iki yerde ayrışır: bir tarafta düzeltilen kural öbür tarafta yoktur. Dizin junction'ı elevation gerektirmez (sembolik link yönetici ister):
+
+```powershell
+New-Item -ItemType Junction `
+  -Path   "$env:USERPROFILE\.claude\skills\solak-design-ui" `
+  -Target "$env:USERPROFILE\solak-skills\skills\solak-design-ui"
+```
+
+Böylece repo tek kaynak olur; düzenleme anında kurulu skill'e yansır.
+
 ## Skill listesi
 
 | Skill | Amaç | Durum |
