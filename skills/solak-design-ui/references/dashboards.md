@@ -1,14 +1,14 @@
-# Dashboard / Metrik Özeti
+# Dashboard / Metric Summary
 
-## Her tile tek bir soruyu cevaplar
+## Every tile answers one question
 
-Bir tile eklerken sorusunu yaz: "Bu ay hedefin ne kadar gerisindeyiz?" Soruyu yazamıyorsan tile'ı çıkar.
+When adding a tile, write its question down: "How far behind target are we this month?" If the question cannot be written, remove the tile.
 
-Aynı ağırlıkta on iki kutu hiyerarşi değil, envanterdir. Dashboard'un işi kullanıcının **bir sonraki eylemini** belirlemek.
+Twelve boxes of equal weight are not a hierarchy, they are an inventory. A dashboard's job is to determine the user's **next action**.
 
-## Eşit olmayan kompozisyon
+## Unequal composition
 
-Bento düzeni eşit hücrelerden oluşmaz — önem farkı boyut farkıyla görünür.
+A bento layout is not made of equal cells — a difference in importance shows up as a difference in size.
 
 ```css
 .dashboard {
@@ -16,36 +16,36 @@ Bento düzeni eşit hücrelerden oluşmaz — önem farkı boyut farkıyla gör�
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-tile);
 }
-.tile--primary { grid-column: span 2; grid-row: span 2; }  /* ana metrik */
+.tile--primary { grid-column: span 2; grid-row: span 2; }  /* headline metric */
 .tile--wide    { grid-column: span 2; }                    /* trend */
-.tile--unit    { grid-column: span 1; }                    /* destek metrik */
+.tile--unit    { grid-column: span 1; }                    /* supporting metric */
 ```
 
-Eşit grid bento değil, sadece grid'dir. `minmax(0, 1fr)` önemli: `1fr` tek başına taşan içerikte kolonu şişirir.
+An equal grid is not bento, it is just a grid. `minmax(0, 1fr)` matters: `1fr` on its own lets overflowing content inflate the column.
 
-## KPI anatomisi
+## KPI anatomy
 
-Dört parça, sırasıyla:
+Four parts, in this order:
 
-1. **Etiket** — ne ölçülüyor, birimiyle
-2. **Değer** — en büyük ölçek, `tabular-nums`
-3. **Değişim** — yön + miktar; **renk tek gösterge olamaz** (ok ikonu veya işaret eşlik eder)
-4. **Bağlam** — neye göre: "geçen aya göre", "hedefin %8 altında"
+1. **Label** — what is measured, with its unit
+2. **Value** — the largest step in the scale, tabular lining figures
+3. **Change** — direction plus magnitude; **colour cannot be the only indicator** (an arrow icon or sign accompanies it)
+4. **Context** — compared to what: "vs last month", "8% below target"
 
 ```html
 <article class="tile">
-  <h3 class="tile-label">Aylık tüketim <span class="tile-unit">kWh</span></h3>
-  <p class="tile-value">184.320</p>
+  <h3 class="tile-label">Monthly usage <span class="tile-unit">GB</span></h3>
+  <p class="tile-value">184,320</p>
   <p class="tile-delta tile-delta--up">
-    <svg aria-hidden="true"><!-- yukarı ok --></svg>
-    %12,4 <span class="tile-context">geçen aya göre</span>
+    <svg aria-hidden="true"><!-- up arrow --></svg>
+    12.4% <span class="tile-context">vs last month</span>
   </p>
 </article>
 ```
 
-**Bağlamsız sayı bilgi değildir.** "184.320" tek başına kullanıcıya hiçbir karar verdirmez.
+**A number without context is not information.** "184,320" on its own lets the user decide nothing.
 
-## Eşik renkleri semantik, ve renk tek gösterge olamaz
+## Threshold colours are semantic, and colour is never the only indicator
 
 ```css
 :root {
@@ -55,49 +55,58 @@ Dört parça, sırasıyla:
 }
 ```
 
-Her durum rengi bir **ikon veya metinle** eşlenir. Renk körlüğü bir yana, gri tonlamalı çıktıda ve düşük parlaklıkta ekranda renk kaybolur.
+Every status colour is paired with an **icon or text**. Colour blindness aside, colour disappears in greyscale output and on dim screens.
 
-Ayrıca: bir metriğin "yukarı" gitmesi her zaman iyi değildir (maliyet, arıza sayısı, gecikme). **Yönü ok taşır, iyi/kötü durumunu renk taşır** — ikisini karıştırma.
+Also: a metric going "up" is not always good (cost, failure count, latency). **The arrow carries direction, the colour carries good/bad** — do not conflate them.
 
-## Sparkline
+## Restraint on a dashboard
 
-- Eksen ve etiket yok; işi trendin şeklini göstermek
-- Son değer noktayla işaretlenir
-- Tek başına sayı yerine geçmez — her zaman değerle birlikte
-- Yükseklik 24-40px; daha küçüğü şekli okunmaz yapar
-- Y ekseni sıfırdan başlamıyorsa bunu belli et; yoksa küçük dalgalanma dramatik görünür
+This is where decoration accumulates fastest. Four rules:
 
-## Grafik işi geldiğinde
+- **The tile is a boundary, not an object.** One quiet border or one sunken surface — not a border *and* a shadow *and* a gradient.
+- **One elevation level, and only if something floats.** Static tiles do not need shadows (`design-quality.md`).
+- **Do not colour tiles by category.** Tile colour is reserved for threshold status; a palette of category colours means status has nowhere left to speak.
+- **Do not repeat the unit in every part.** Unit goes in the label; the value stays clean.
 
-Grafik tipi, kategorik palet sınırı, eksen ve tooltip kuralları **`design-quality.md`'nin "Grafik gerekiyorsa" bölümünde.** Bu skill grafiği kendi kurallarıyla kurar; dış bir skill'e ihtiyaç duymaz.
+## Sparklines
 
-Tile içindeki grafiğe özel iki kural:
+- No axes, no labels; the job is to show the shape of a trend
+- Mark the last value with a point
+- Never a substitute for the number — always shown alongside the value
+- Height 24-40px; smaller makes the shape unreadable
+- If the Y axis does not start at zero, say so; otherwise small variation looks dramatic
 
-- **Tile grafiği eksen taşımaz.** Tile'ın işi tek soruyu cevaplamak; eksenli, etiketli grafik ayrı bir bileşendir.
-- **Grafik sayının yerine geçmez.** Trend şekli her zaman değerle birlikte; kullanıcı tile'dan bir sayı okuyabilmeli.
+## When a chart is needed
 
-## Durumlar
+Chart type, categorical palette limits, axes and tooltip rules live in the **"When a chart is needed"** section of `design-quality.md`. This skill builds charts with its own rules; no external skill is required.
 
-| Durum | Tasarım |
-|-------|---------|
-| Veri yok | Tile yapısı korunur; değer yerine "veri yok" + nedeni |
-| Kısmi veri | Hangi dönemin eksik olduğu yazılır |
-| Yükleniyor | Tile boyutunda iskelet — layout shift olmaz |
-| Bayat veri | Son güncelleme zamanı görünür; canlı sanılmasın |
-| Hata | Tile içinde, tüm dashboard'u boşaltmadan |
+Two rules specific to charts inside a tile:
 
-**Eksik veriyi sıfır olarak gösterme.** Dashboard'lardaki en pahalı hata budur: yanlış karara yol açar. Sıfır bir ölçümdür, veri yokluğu değildir.
+- **A tile chart carries no axes.** The tile's job is to answer one question; an axed, labelled chart is a different component.
+- **A chart never replaces the number.** The trend shape always accompanies a value; the user must be able to read a number off the tile.
 
-## Düzen ve okuma sırası
+## States
 
-- Sol üst en önemli metrik (soldan sağa okuma)
-- İlgili metrikler komşu
-- Dashboard bir ekrana sığmalı; kaydırma gerekiyorsa muhtemelen iki farklı dashboard var
-- `320px`'te tek kolona iner; sıra önem sırasıyla aynı kalır
+| State | Design |
+|-------|--------|
+| No data | Keep the tile structure; instead of a value, "no data" plus the reason |
+| Partial data | State which period is missing |
+| Loading | Skeleton at tile size — no layout shift |
+| Stale data | Last-updated time visible; it must not be mistaken for live |
+| Error | Inside the tile, without emptying the whole dashboard |
 
-## Erişilebilirlik
+**Never render missing data as zero.** This is the most expensive mistake on dashboards: it leads to wrong decisions. Zero is a measurement; absence of data is not.
 
-- Her tile `article` + başlık (`h3`); ekran okuyucu tile'ları listeleyebilmeli
-- Dekoratif ikon `aria-hidden="true"`; anlam taşıyan ikonun metin karşılığı olmalı
-- Otomatik yenilenen değerler `aria-live="polite"` — ama sık yenilemede kapat, sürekli okuma rahatsız eder
-- Sparkline `aria-hidden`; trendi metinle de söyle ("son 7 günde artış")
+## Layout and reading order
+
+- Most important metric top-left (left-to-right reading)
+- Related metrics adjacent
+- A dashboard should fit one screen; if it needs scrolling there are probably two dashboards
+- At `320px` it collapses to one column; the order stays the order of importance
+
+## Accessibility
+
+- Each tile is an `article` with a heading (`h3`); a screen reader must be able to enumerate tiles
+- Decorative icons `aria-hidden="true"`; any icon carrying meaning needs a text equivalent
+- Auto-refreshing values use `aria-live="polite"` — but turn it off for frequent refreshes, constant announcements are hostile
+- Sparklines are `aria-hidden`; state the trend in text too ("up over the last 7 days")

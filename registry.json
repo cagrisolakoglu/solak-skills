@@ -17,10 +17,10 @@
     {
       "name": "solak-design-ui",
       "path": "skills/solak-design-ui",
-      "version": "0.5.0",
+      "version": "1.0.0",
       "status": "draft",
-      "tags": ["design", "frontend", "ui", "data-dense", "enterprise", "self-contained"],
-      "description": "Designs and implements data-dense enterprise UI: tables and data grids, filter panels, data-entry forms and metric dashboards. Decides density and column grid deliberately, formats numbers, dates and units for the product locale, designs real-data states, and stays on the project's token layer. Self-contained: carries its own design-quality criteria, token layer and chart rules with no dependency on other skills or external rule files."
+      "tags": ["design", "frontend", "ui", "data-dense", "tables", "forms", "dashboards", "self-contained"],
+      "description": "Designs and implements data-dense product UI: tables and data grids, filter panels, data-entry forms and metric dashboards. Decides density and column grid deliberately, formats numbers, dates and units for the product locale, designs the states real data produces, and keeps every value on a token layer. Defaults to restraint: hierarchy from type, space and alignment rather than boxes, borders and colour. Self-contained: carries its own design-quality criteria, token layer, typography, formatting and chart rules with no dependency on other skills or external rule files."
     }
   ]
 }

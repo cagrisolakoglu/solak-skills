@@ -92,7 +92,7 @@ Bu repoyu bir ajan kuruyorsa: **junction dene → hata alırsan symlink dene →
 | Skill | Amaç | Durum |
 |-------|------|-------|
 | [solak-create-skill](skills/solak-create-skill/SKILL.md) | Bu repoda standarda uygun yeni skill üretir | ✅ stable |
-| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Veri-yoğun kurumsal UI: tablo, filtre, form, dashboard (kendi kendine yeten) | 🚧 draft |
+| [solak-design-ui](skills/solak-design-ui/SKILL.md) | Veri-yoğun ürün UI'ı: tablo, filtre, form, dashboard. Kendi kendine yeten, İngilizce | 🚧 draft |
 
 Güncel ve makine-okunur liste: [`registry.json`](registry.json)
 

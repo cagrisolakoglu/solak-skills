@@ -1,154 +1,162 @@
-# Sayı, Tarih ve Birim Biçimi
+# Numbers, Dates and Units
 
-Veri-yoğun ekranda biçim kozmetik değil: yanlış biçimlenmiş sayı **yanlış okunur**, yanlış okunan sayı yanlış karar üretir. Hizalama kuralları için `tables.md`, alan genişliği için `forms.md`.
+In a data-dense screen, formatting is not cosmetic: a badly formatted number is **misread**, and a misread number produces a wrong decision. Alignment rules are in `tables.md`, field width in `forms.md`, figure sets and monospace scope in `typography.md`.
 
-## Yerel ayarı ürün belirler, kod uydurmaz
+## The product decides the locale; code does not invent it
 
-Türkçe arayüzde `tr-TR`: **binlik ayırıcı nokta, ondalık ayırıcı virgül.**
+Separators are not universal. The same value in three locales:
 
-| Değer | ✅ tr-TR | ❌ |
-|-------|---------|----|
-| Endeks | `1.284.690` | `1,284,690` · `1 284 690` · `1284690` |
-| Tüketim | `13.240,75` | `13,240.75` |
-| Yüzde | `%12,4` | `12.4%` · `% 12,4` |
-| Para | `1.284.690,00 ₺` | `₺1,284,690.00` |
+| Locale | Grouping | Decimal | Example |
+|--------|----------|---------|---------|
+| `en-US` | `,` | `.` | `1,284,690.75` |
+| `de-DE`, `tr-TR`, `es-ES` | `.` | `,` | `1.284.690,75` |
+| `fr-FR` | narrow space | `,` | `1 284 690,75` |
+| `en-IN` | lakh/crore grouping | `.` | `12,84,690.75` |
 
-Biçimi elle kurmak (regex, `replace`, string birleştirme) yanlış yerde yuvarlar ve negatif sayıyı bozar. **`Intl` kullan:**
+Building the format by hand (regex, `replace`, string concatenation) rounds in the wrong place and mangles negatives. **Use `Intl`:**
 
 ```js
-const kwh = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 });
-const money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
-const pct = new Intl.NumberFormat('tr-TR', { style: 'percent', maximumFractionDigits: 1 });
+const num   = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+const money = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+const pct   = new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 1 });
 
-kwh.format(1284690);      // "1.284.690"
-money.format(1284690);    // "1.284.690,00 ₺"
-pct.format(0.124);        // "%12,4"
+num.format(1284690);    // en-US "1,284,690"   · de-DE "1.284.690"
+money.format(1284690);  // en-US "€1,284,690.00" · de-DE "1.284.690,00 €"
+pct.format(0.124);      // en-US "12.4%"       · tr-TR "%12,4"
 ```
 
-Tarayıcı diline güvenme; yerel ayar ürün ayarından (veya kullanıcı tercihinden) gelir, `navigator.language`'dan değil. Aksi halde aynı veri iki makinede iki farklı sayı gibi görünür.
+Note what `Intl` handles that hand-rolling does not: currency symbol **position** and percent sign position both move with the locale.
 
-Girdi tarafında **biçimi kullanıcıya dayatma.** Doğrulama `1.284.690`, `1284690` ve `1 284 690`'ı kabul eder; kaydetmeden önce normalize eder. Kullanıcıyı ayırıcı koymaya zorlamak veri girişini yavaşlatır.
+Do not trust the browser language: the locale comes from the product setting (or the user's preference), not from `navigator.language`. Otherwise the same data looks like two different numbers on two machines.
 
-## Kimlik numarası sayı değildir
+On the input side, **do not impose the format on the user.** Validation accepts `1284690`, `1,284,690` and `1.284.690`, and normalises before saving. Forcing users to type separators slows data entry down.
 
-Sayaç seri no, fatura no, EIC/ETSO kodu, tesis kodu, dönem (`2026-07`), vergi no — bunlar rakamdan oluşur ama **ölçüm değildir**: toplanmaz, karşılaştırılmaz, ortalaması alınmaz.
+## An identifier is not a number
 
-| | Ölçülen sayı | Kimlik |
-|--|--------------|--------|
-| Hizalama | **Sağa** | **Sola** (metin gibi) |
-| Binlik ayırıcı | Var | **Yok** — `4471 0982 331` kendi bloklamasını korur |
-| Font | Sans + tabular figür; **mono asla** | Teknik kimlikte **mono** (`typography.md`) |
-| Yuvarlama | Olabilir | Asla |
+Serial numbers, invoice numbers, registry codes, SKUs, account numbers, period labels (`2026-07`), tax IDs — these are made of digits but are **not measurements**: they are not summed, compared, or averaged.
+
+| | Measured number | Identifier |
+|--|-----------------|------------|
+| Alignment | **Right** | **Left** (like text) |
+| Grouping separator | Yes | **No** — `4471 0982 331` keeps its own blocking |
+| Font | Sans + tabular figures; **never monospace** | Monospace for technical identifiers (`typography.md`) |
+| Rounding | Possible | Never |
 
 ```css
 .num        { font-variant-numeric: tabular-nums lining-nums; text-align: right; }
-/* teknik kimlik: UUID, EIC, sayaç no, endpoint, hash */
+/* technical identifier: UUID, registry code, serial, endpoint, hash */
 .ident-tech { font-family: var(--font-mono); font-variant-numeric: tabular-nums lining-nums; text-align: left; }
-/* insan-okur kimlik: dönem, tarih benzeri kodlar — mono değil */
+/* human-facing identifier: period, date-like codes — not monospace */
 .ident      { font-variant-numeric: tabular-nums lining-nums; text-align: left; letter-spacing: 0.02em; }
 ```
 
-`lining-nums` ihmal edilemez: bazı font aileleri oldstyle figürü (alçalan `3`, `4`, `7`, `9`) varsayılan kullanır ve `tabular-nums` bunu düzeltmez — kolon hizalı ama satır zıplar. Ayrıntı `typography.md`'de.
+`lining-nums` cannot be skipped: some families default to oldstyle figures (descending `3`, `4`, `7`, `9`), which `tabular-nums` does not correct — the column aligns but the line jitters. Detail in `typography.md`.
 
-Kimliği sağa hizalamak onu toplanabilir bir miktar gibi gösterir; kolondaki gözü de boşa yorar.
+Right-aligning an identifier makes it look like a summable quantity and wastes the eye's work down the column.
 
-## Hassasiyet kolon boyunca sabittir
+## Precision is constant down a column
 
-Bir kolonda ondalık basamak sayısı **değişmez.** `13.240` ile `13.240,75` aynı kolonda görünüyorsa basamaklar hizalanmaz ve karşılaştırma biter.
+The number of decimal places in a column **does not vary.** If `13,240` and `13,240.75` appear in the same column, the digits do not line up and comparison is over.
 
 ```
-✅ 13.240,00   ❌ 13.240
-    9.180,50        9.180,5
-      412,25          412,25
+✅ 13,240.00   ❌ 13,240
+    9,180.50        9,180.5
+      412.25          412.25
 ```
 
-Hassasiyet niceliğin türünden gelir, verinin o anki halinden değil:
+Precision follows the **kind of quantity**, not the current state of the data:
 
-| Nicelik | Basamak | Neden |
-|---------|---------|-------|
-| Endeks (kWh) | 0 | Sayaç tam sayı okur |
-| Tüketim (kWh) | 0 veya 2 | Çarpanla hesaplanır; kararı bir kez ver |
-| Güç (MW) | 2-3 | Küçük fark anlamlı |
-| Birim fiyat (₺/MWh) | 2 | Piyasa kotasyonu |
-| Tutar (₺) | 2 | Kuruş |
-| Oran (%) | 1 | Daha fazlası gürültü |
+| Quantity | Places | Why |
+|----------|--------|-----|
+| Counts, records, units | 0 | Integers by nature |
+| Derived quantity | 0 or 2 | Computed; decide once and hold it |
+| Rates, ratios | 2-3 | Small differences are meaningful |
+| Unit price | 2 | Market convention |
+| Money total | 2 | Minor units |
+| Percentage | 1 | More is noise |
 
-## Birim etiketi hücrede değil başlıkta
+## The unit label belongs in the header, not the cell
 
-Birim kolon başlığında veya alan etiketinde bir kez yazılır: `Önceki Endeks (kWh)`. Her hücrede tekrarlamak (`1.284.690 kWh`) sayıyı boğar ve sağa hizalamayı bozar — göz artık rakam yerine harf kenarı takip eder.
+The unit is written once, in the column header or field label: `Previous balance (GB)`. Repeating it in every cell (`184,320 GB`) drowns the number and breaks right alignment — the eye starts tracking letter edges instead of digits.
 
-Tek bir değer gösteriliyorsa (KPI tile, türetilmiş blok) birim değerin yanındadır ama **daha küçük ve soluk**; sayı baskın kalır.
+For a single value (a KPI tile, a derived block) the unit sits next to the value but **smaller and quieter**; the number stays dominant.
 
-**Bir kolonda tek birim.** Aynı kolonda kWh ile MWh karıştırmak bin kat hata üretir; birim kayıt başına değişiyorsa ya hepsini tek birime çevir ya da birimi ayrı kolona al ve bunu başlıkta belirt.
+**One unit per column.** Mixing GB with TB, or cents with dollars, in one column produces thousand-fold errors. If the unit varies per record, either convert everything to one unit or move the unit to its own column and say so in the header.
 
-## Tarih ve saat
+### Unit symbols are case-sensitive
 
-- Tarih: `GG.AA.YYYY` → `31.07.2026`. Placeholder olarak da bu maskeyi göster.
-- Saat: 24 saat, `HH:mm` → `14:32`. AM/PM Türkçe arayüzde yok.
-- Tarih + saat: `31.07.2026 14:32`
-- Dönem: `2026-07` — bu bir **kimlik**, tarih değil; sola hizalı, yerel biçime çevrilmez.
-- API ve URL: ISO 8601 (`2026-07-31T14:32:00+03:00`). Yerelleştirme yalnızca görüntüde.
-- Tek tabloda **tek format**. `31.07.2026` ile `2026-07-31` aynı kolonda görünmez.
+`kWh` is not `KWH`, `MB` is not `Mb`, `mA` is not `MA`. In `kWh` the `k` is kilo, `W` is watt, `h` is hour; in `Mb` versus `MB` the difference is a factor of eight. This matters most where `text-transform: uppercase` is applied to headers — see `tables.md`.
+
+## Dates and times
+
+- Use a locale-aware format via `Intl.DateTimeFormat`; do not hand-assemble `DD.MM.YYYY` or `MM/DD/YYYY`
+- Show the expected mask in the input placeholder, matching the locale
+- Time: match the locale's convention (24-hour or 12-hour); do not mix both in one screen
+- Period labels like `2026-07` are **identifiers**, not dates: left-aligned, never localised
+- APIs and URLs: ISO 8601 (`2026-07-31T14:32:00+03:00`). Localisation happens at display time only
+- **One format per table.** `31.07.2026` and `2026-07-31` never appear in the same column
 
 ```js
-const dt = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short', timeStyle: 'short' });
+const dt = new Intl.DateTimeFormat(locale, { dateStyle: 'short', timeStyle: 'short' });
 ```
 
-### Zaman damgası ve saat dilimi
+### Time zones and hourly series
 
-Enerji verisi saatliktir ve saat dilimi bir görüntü tercihi değil, **veri doğruluğu** meselesidir:
+Where data is timestamped, the time zone is not a display preference but a **correctness** matter:
 
-- Türkiye 2016'dan beri kalıcı UTC+3; yaz saati uygulaması **yok**.
-- 2016 öncesi veride yaz saati geçişleri **var**: 23 saatlik ve 25 saatlik günler. Geçmiş uzlaştırma verisi gösteren ekran günün 24 saat olduğunu varsayamaz.
-- Saatlik seride hangi ucun dahil olduğunu yaz: `14:00-15:00` mı, `14:00` etiketiyle o saatin tamamı mı. Belirsizlik bir saatlik kaymayla sonuçlanır.
+- Store and transmit an instant (UTC or an offset-bearing ISO string); localise only at display
+- In regions observing daylight saving, **a day is not always 24 hours** — there are 23-hour and 25-hour days. Any hourly series, bucket chart or day-over-day comparison that assumes 24 buckets will be silently wrong twice a year
+- For an hourly series, say which end is inclusive: is it `14:00-15:00`, or does the label `14:00` mean the whole hour? Ambiguity here costs exactly one hour of shift
+- Show the zone when the audience spans zones; "09:12" alone is not a time
 
-## Eksik veri sıfır değildir
+## Missing data is not zero
 
-Üç farklı durum, üç farklı gösterim:
+Three distinct situations, three presentations:
 
-| Durum | Gösterim | Anlamı |
-|-------|----------|--------|
-| Ölçüldü, değer sıfır | `0` | Tüketim olmadı |
-| Henüz ölçülmedi | `—` | Veri bekleniyor |
-| Ölçülemedi / hatalı | `—` + neden | Arıza, erişim yok |
+| Situation | Display | Meaning |
+|-----------|---------|---------|
+| Measured, value is zero | `0` | Nothing happened |
+| Not yet measured | `—` | Data pending |
+| Could not be measured | `—` + reason | Failure, no access |
 
-`—` hücresi hesaba girmez: toplam satırında ve ortalamada bu satırlar **hariç tutulur**, hariç tutulduğu da yazılır ("3 sayaç okunamadı, ortalamaya dahil değil"). Eksiği sıfır sayarak hesaplanan ortalama, kimsenin fark etmediği yanlış karardır.
+A `—` cell does not enter arithmetic: those rows are **excluded** from totals and averages, and the exclusion is stated ("3 records could not be read, not included in the average"). An average computed by treating absence as zero is a wrong decision nobody notices.
 
-## Negatif değer ve işaret
+## Negative values and signs
 
-- Eksi işareti kullan (`-1.240`), muhasebe parantezi (`(1.240)`) kurumsal ekranda okunmaz.
-- İşaret **renk değil** birincil göstergedir; renk ikinci kanal.
-- Yön ile iyi/kötü ayrı şeyler: üretim eksiye düştüyse bu "kötü", tüketim eksiye düştüyse muhtemelen "veri hatası". Neyin beklendiğini bağlam metniyle söyle.
-- Sıfırın altına düşmesi imkansız bir nicelikte eksi değer görünüyorsa bu bir **veri hatası göstergesidir**, biçim sorunu değil — sessizce `0` gösterme.
+- Use a minus sign (`-1,240`); accounting parentheses (`(1,240)`) do not read in product UI
+- The sign is the **primary** indicator, not colour; colour is the second channel
+- Direction and good/bad are different things: revenue falling is "bad", returns falling is "good". State what was expected in the context line
+- A negative value in a quantity that cannot go below zero is a **data error signal**, not a formatting problem — never silently render it as `0` (see the anomaly rule in `tables.md`)
 
-## Yuvarlama: gösterilenlerin toplamı ile gösterilen toplam
+## Rounding: the sum of displayed values vs the displayed sum
 
-Satırları yuvarlayıp gösterirsen, kullanıcının topladığı sayı ile toplam satırındaki sayı **tutmaz**.
+If rows are rounded for display, the number the user adds up will **not match** the total row.
 
 ```
-1.240,4 → 1.240        Toplam ham değerlerden: 3.720,9 → 3.721
-1.240,3 → 1.240        Gösterilenlerin toplamı: 3.720
-1.240,2 → 1.240        Fark: 1
+1,240.4 → 1,240        Total from raw values: 3,720.9 → 3,721
+1,240.3 → 1,240        Sum of displayed:      3,720
+1,240.2 → 1,240        Difference: 1
 ```
 
-Kural: **toplamı her zaman ham değerlerden hesapla, yuvarlamayı en son yap.** Fark kalıyorsa ve kullanıcı elle topluyorsa (fatura, uzlaştırma) dipnot düş: "Satırlar tam sayıya yuvarlanmıştır; toplam ham değerlerden hesaplanır." Sessiz bir birim fark, faturada güven kaybıdır.
+Rule: **always compute totals from raw values and round last.** If a discrepancy remains and users add up by hand (invoices, statements, reconciliations), add a footnote: "Rows are rounded to whole units; the total is computed from unrounded values." A silent one-unit difference costs trust.
 
-## Kısaltma yalnızca dashboard'da
+## Abbreviate only on dashboards
 
-`1,2 mn kWh` gibi kısaltma operasyonel tabloda **yasak** — kullanıcı orada tam değeri karşılaştırıyor. KPI tile'ında kabul edilir ama:
+Abbreviations like `1.2M` are **banned** in an operational table — that is where users compare exact values. They are acceptable in a KPI tile, provided:
 
-- Birim ve büyüklük açıkça yazılır (`mn kWh`, `GWh`)
-- Kesin değere erişim kalır (tooltip, detay ekranı)
-- Kolon içinde kısaltma tutarlı olur; bir satır `980 bin`, öteki `1,2 mn` olmaz — ölçeği kolon seçer
+- Unit and magnitude are explicit (`1.2M GB`, `€1.2M`)
+- The exact value stays reachable (tooltip, detail screen)
+- Abbreviation is consistent within a column; one row does not read `980K` while the next reads `1.2M` — the column picks the scale
 
-## Doğrulama
+## Verification
 
-- [ ] Sayılar `Intl` ile biçimlenmiş, elle string birleştirme yok
-- [ ] tr-TR: binlik nokta, ondalık virgül; yüzde ve para doğru
-- [ ] Kimlik numaraları sola hizalı, ayırıcı eklenmemiş, yuvarlanmamış
-- [ ] Ondalık basamak sayısı kolon boyunca sabit
-- [ ] Birim başlıkta bir kez; bir kolonda tek birim
-- [ ] Tarih tek formatta (`GG.AA.YYYY`), saat 24 saat
-- [ ] Eksik veri `—`, sıfırdan ayırt edilebilir, hesaba dahil değil
-- [ ] Toplam ham değerlerden hesaplanmış; yuvarlama farkı varsa beyan edilmiş
-- [ ] Operasyonel tabloda kısaltılmış sayı yok
+- [ ] Numbers formatted through `Intl`, no hand-built strings
+- [ ] Locale comes from the product setting, not `navigator.language`; grouping, decimal, currency and percent positions correct
+- [ ] Identifiers left-aligned, no grouping separators, never rounded
+- [ ] Decimal places constant down each column
+- [ ] Unit in the header once; one unit per column; unit symbol casing preserved
+- [ ] One date format per surface; period labels treated as identifiers
+- [ ] Hourly series do not assume 24-hour days where DST applies; interval boundaries stated
+- [ ] Missing data shown as `—`, distinguishable from zero, excluded from arithmetic
+- [ ] Totals computed from raw values; any rounding difference declared
+- [ ] No abbreviated numbers in operational tables

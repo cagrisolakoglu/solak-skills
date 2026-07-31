@@ -1,35 +1,35 @@
-# Tipografi
+# Typography
 
-Yoğun veri yüzeyinde tipografi süs değil **okuma aracıdır**: yanlış figür seti kolon hizasını, yanlış font ailesi tarama hızını, yanlış ağırlık okunurluğu bozar. Sayı biçimi ve yerel ayar (`1.284.690`, ondalık virgül) `formatting.md`'de; burada font, figür ve ağırlık kararları var.
+In a data-dense surface, typography is not decoration but a **reading instrument**: the wrong figure set breaks column alignment, the wrong family slows scanning, the wrong weight destroys legibility. Number formatting and locale (separators, decimals) live in `formatting.md`; this file covers family, figures and weight.
 
-## 1 · Önce mevcut sistemi kullan
+## 1 · Use the existing system first
 
-Projede tipografi token'ları varsa **onları kullan**, paralel bir ölçek kurma. Arama yöntemi `tokens.md`'de. Bir framework varsayılanı da bir sistemdir: Quasar/Vuetify projesinde Roboto, Material tabanlı bir üründe kendi ölçeği zaten vardır — ürünün fontunu değiştirmek tipografi kararı değil, marka kararıdır ve bu skill'in işi değildir.
+If the project has typography tokens, **use them**; do not stand up a parallel scale. How to find them is in `tokens.md`. A framework default is also a system: a Material-based product already has its own scale. Changing a product's typeface is a brand decision, not a typography decision, and not this skill's job.
 
-## 2 · Sistem yoksa: Inter Variable
+## 2 · No system? Inter Variable
 
 ```css
 :root {
   --font-ui: "Inter Variable", "Inter var", Inter,
-             ui-sans-serif, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+             ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 ```
 
-Inter yoğun UI için tasarlandı: geniş x-height, `1`/`l`/`I` ve `0`/`O` ayrımı net, tabular figür seti tam. Variable sürümü 400-600 arasını tek dosyada verir.
+Inter was designed for dense UI: large x-height, unambiguous `1`/`l`/`I` and `0`/`O`, a complete tabular figure set. The variable version covers 400-600 in one file.
 
-**Fallback zinciri kuralın parçasıdır.** Inter kurulu değilse ve self-host edilmemişse tarayıcı sessizce Arial'a düşer — kural uygulanmış görünür, sonuç uygulanmamıştır. Üç yol, sırayla:
+**The fallback chain is part of the rule.** If Inter is neither installed nor self-hosted, the browser silently drops to Arial — the rule looks applied while the result is not. Three paths, in order:
 
-1. **Self-host** (tercih edilen) — `woff2` dosyasını projeye koy, `@font-face` + `font-display: swap`. Tek ağırlık dosyası (variable) yeterli; ayrı ayrı 400/500/600 indirme.
-2. **Kurulu varsay** — yalnızca kurumsal imaj yönetimiyle dağıtıldığı biliniyorsa.
-3. **Sistem fontuna düş** — Inter yoksa `Segoe UI Variable` / `system-ui` kabul edilebilir; ama o zaman **figür setini doğrula** (aşağı bak), çünkü fallback fontun tabular desteği farklı olabilir.
+1. **Self-host** (preferred) — put the `woff2` in the project, `@font-face` plus `font-display: swap`. One variable file is enough; do not download separate 400/500/600 files.
+2. **Assume installed** — only when it is known to be distributed by device management.
+3. **Fall back to the system font** — `system-ui` / `Segoe UI` / `-apple-system` is acceptable, but then **verify the figure set** (below), because fallback fonts differ in tabular support.
 
-Hangisi seçildiyse çıktı raporunda yaz. "Inter kullanıldı" demek, gerçekten yüklendiğini kanıtlamaz — ekran görüntüsünde harf formlarına bak.
+State which path was taken in the report. "We used Inter" does not prove it loaded — look at the letterforms in a screenshot.
 
-## 3 · Tablo ve metriklerde monospace yok
+## 3 · No monospace in tables or metrics
 
-Ölçülen sayıda, metrikte, KPI değerinde monospace **kullanma**. Mono her karaktere eşit yer verir; yoğun tabloda kolon gereksiz genişler ve rakamlar seyrekleşerek tarama yavaşlar. `tabular-nums`'lı bir sans zaten basamakları hizalar — mono'nun tek faydasını sağlar, bedelini ödemeden.
+Do **not** use monospace for measured numbers, metrics or KPI values. Monospace gives every character equal width; in a dense table the column widens needlessly and the digits thin out, slowing the scan. A sans with tabular figures already aligns the digits — it delivers monospace's only benefit without paying its cost.
 
-## 4 · Sayısal hücrelerde üç ayar birlikte
+## 4 · Three settings together in numeric cells
 
 ```css
 .num {
@@ -38,100 +38,104 @@ Hangisi seçildiyse çıktı raporunda yaz. "Inter kullanıldı" demek, gerçekt
 }
 ```
 
-- **`tabular-nums`** — her rakam eşit genişlik; basamaklar dikey hizalanır
-- **`lining-nums`** — rakamlar aynı yükseklikte oturur. Bazı font aileleri **oldstyle** (alçalan `3`, `4`, `7`, `9`) figürleri varsayılan kullanır; `tabular-nums` tek başına bunu düzeltmez, kolon hizalı ama satır zıplayan görünür
-- **Sağa hizalama** — tipe göre hizalama tablosu `tables.md`'de
-- **Tutarlı ondalık basamak** — kolon boyunca sabit; gerekçesi ve nicelik tablosu `formatting.md`'de
+- **`tabular-nums`** — every digit the same width; digits line up vertically
+- **`lining-nums`** — digits sit at a uniform height. Some families default to **oldstyle** figures (descending `3`, `4`, `7`, `9`); `tabular-nums` alone does not fix this, and the column ends up aligned but visually jittery
+- **Right alignment** — the alignment-by-type table is in `tables.md`
+- **Constant decimal places** — fixed down the column; rationale and a per-quantity table are in `formatting.md`
 
-Üçü birlikte olmadan hiçbiri işini yapmaz. Doğrulama: kolonda `1.284.690` ile `98.440`'ın **son hanesi** aynı dikey çizgide mi?
+None of them does its job without the others. Verification: in a column, is the **last digit** of `1,284,690` on the same vertical line as the last digit of `98,440`?
 
-## 5 · Mono yalnızca teknik kimlikte
+## 5 · Monospace only for technical identifiers
 
-Monospace'in yeri, karakteri **tek tek** okunan ve dikte edilen değerlerdir:
+Monospace belongs to values that are read **character by character** and dictated aloud:
 
-| Mono | Mono değil |
-|------|------------|
-| UUID | Tüketim, tutar, yüzde |
-| EIC / ETSO kodu | Tarih, saat, dönem (`2026-07`) |
-| Sayaç seri no | Kişi adı, tesis adı |
-| Endpoint, URL yolu | Durum etiketi |
-| Hash, commit sha | Sayfa/kayıt sayısı |
-| Log satırı, stack trace | Sıralama/filtre değeri |
-
-```css
-:root { --font-mono: "Cascadia Mono", Consolas, ui-monospace, "SF Mono", monospace; }
-.ident-tech { font-family: var(--font-mono); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0; }
-```
-
-### 3 ile 5 çakışırsa: içerik kazanır, kap değil
-
-Sayaç seri no bir **tablo kolonunda** yaşar. Kural 3 "tabloda mono yok", kural 5 "sayaç kodu mono" der — çelişki görünür, değildir:
-
-- Kural 3 **ölçülen sayıyı** yönetir: karşılaştırılan, toplanan, ortalaması alınan değer
-- Kural 5 **kimliği** yönetir: karşılaştırılmayan, dikte edilen, kopyalanan değer
-
-Karar hücrenin nerede durduğuna değil **ne taşıdığına** bakar. Yani: tüketim kolonu sans + tabular, sayaç no kolonu mono. Aynı tabloda ikisi bir arada olur ve bu doğrudur — kimlik kolonu görsel olarak da ayrışmalı, çünkü işi farklıdır.
-
-Kimlik mono ise **sola hizalanır** (kimlik sayı değildir, `formatting.md`), mono zaten hizalamayı sağladığı için `letter-spacing` eklemeye gerek yoktur.
-
-## 6 · Dense varsayılanları
-
-| Rol | Boyut | Satır yüksekliği | Ağırlık |
-|-----|-------|------------------|---------|
-| Gövde / hücre | 13px | 1.35 | 400 |
-| Başlık / etiket | 12px | 1.3 | 500 |
+| Monospace | Not monospace |
+|-----------|---------------|
+| UUID, GUID | Amounts, quantities, percentages |
+| Account / SKU / registry codes | Dates, times, period labels (`2026-07`) |
+| Serial numbers | Person and place names |
+| Endpoints, URL paths | Status labels |
+| Hashes, commit SHAs | Page and record counts |
+| Log lines, stack traces | Sort and filter values |
 
 ```css
-[data-density="dense"] {
-  --text-body:   0.8125rem;  /* 13px */
-  --leading-body: 1.35;
-  --text-label:  0.75rem;    /* 12px */
-  --leading-label: 1.3;
-  --weight-body:  400;
-  --weight-label: 500;
+:root { --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace; }
+.ident-tech {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0;
 }
 ```
 
-500 **varsayılandır**, tavan değil: bir kolonun karar kolonu olduğunu belirtmek için 600 kullanmak meşru bir sapmadır — ama kasıtlı olmalı ve her başlıkta değil.
+### When 3 and 5 collide: content wins, container does not
 
-### Başlık gövdeden küçükse ikinci bir ayırıcı şart
+A serial number lives **in a table column**. Rule 3 says "no monospace in tables", rule 5 says "serial numbers are monospace" — the contradiction is apparent, not real:
 
-12px başlık, 13px gövdeden küçüktür. Yoğun kurumsal UI'da bu kasıtlıdır ama **yalnızca başlık boyut dışında bir işaret taşırsa** çalışır:
+- Rule 3 governs **measured numbers**: values that are compared, summed, averaged
+- Rule 5 governs **identifiers**: values that are not compared but dictated and copied
+
+The decision looks at **what the cell carries**, not where it sits. So: the amount column is sans plus tabular, the serial column is monospace. Both appear in the same table and that is correct — an identity column should look different, because its job is different.
+
+A monospace identifier is **left-aligned** (an identifier is not a number, see `formatting.md`), and since monospace already aligns the characters, no `letter-spacing` is needed.
+
+## 6 · Dense defaults
+
+| Role | Size | Line height | Weight |
+|------|------|-------------|--------|
+| Body / cell | 13px | 1.35 | 400 |
+| Heading / label | 12px | 1.3 | 500 |
+
+```css
+[data-density="dense"] {
+  --text-body:     0.8125rem;  /* 13px */
+  --leading-body:  1.35;
+  --text-label:    0.75rem;    /* 12px */
+  --leading-label: 1.3;
+  --weight-body:   400;
+  --weight-label:  500;
+}
+```
+
+500 is a **default, not a ceiling**: using 600 to mark a decision column is a legitimate deviation — but it must be deliberate, and not on every heading.
+
+### If the heading is smaller than the body, it needs a second cue
+
+12px headings are smaller than 13px body text. In dense product UI this is deliberate, but it only works **if the heading carries a signal beyond size**:
 
 ```css
 th { text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-strong); }
 ```
 
-Uppercase + harf aralığı + güçlü mürekkep olmadan 12px/500 bir başlık, "küçük gövde metni" gibi görünür ve hiyerarşi **ters döner**. Uppercase kullanıyorsan birim sembolleri ve Türkçe `i` için `tables.md`'deki tuzaklara bak.
+Without uppercase, letter-spacing and strong ink, a 12px/500 heading looks like "small body text" and the hierarchy **inverts**. If using uppercase, check the traps in `tables.md` for unit symbols and locale-aware casing.
 
-## 7 · 400'ün altına inme
+## 7 · Never below 400
 
-Yoğun veri yüzeyinde 300 veya daha ince ağırlık kullanma. 13px'te ince gövde, açık zeminde griye düşer ve Windows'un gri tonlamalı yazı tipi düzleştirmesinde kırılır; koyu temada ise tersi olur, ince harf ışır ve kenarları dağılır.
+Do not use 300 or thinner in a data-dense surface. At 13px, thin body text turns grey on light backgrounds and falls apart under greyscale font smoothing; in dark theme the opposite happens — thin letterforms bloom and their edges smear.
 
-Vurguyu azaltmak gerekiyorsa ağırlığı değil **mürekkebi** düşür: `--ink-body` → `--ink-muted`. Kontrast tabanı (≥ 4.5:1) korunur, harf formu bozulmaz.
+To reduce emphasis, lower the **ink**, not the weight: `--ink-body` → `--ink-muted`. The contrast floor (≥ 4.5:1) is preserved and the letterforms stay intact.
 
-## 8 · Minimalizm metni küçültmek değildir
+## 8 · Minimalism is not shrinking the text
 
-Ekran kalabalık görünüyorsa **font küçültmek yanlış çözümdür**: kalabalığı okunmazlığa çevirir, ölçüyü değiştirir, hiyerarşiyi düzleştirir ve erişilebilirliği bozar.
+If a screen looks cluttered, **reducing font size is the wrong fix**: it converts clutter into illegibility, changes the measure, flattens the hierarchy and damages accessibility.
 
-Azaltılacak şeyler, bu sırayla:
+What to reduce, in this order:
 
-1. **Renk** — kaç farklı renk var? Semantik olmayan her rengi çıkar
-2. **Ayırıcı** — zebra *veya* çizgi, ikisi birlikte değil (`tables.md`); kutu içinde kutu yok
-3. **Vurgu** — kaç öğe kalın/accent renkli? Her şey vurguluysa hiçbiri vurgulu değil
-4. **İçerik** — bir soruyu cevaplamayan tile, kolon veya alan (`design-quality.md`)
-5. **Boşluk** — grup arası korunur, süs boşluk kısılır
+1. **Colour** — how many distinct hues are present? Remove every non-semantic one
+2. **Separators** — zebra *or* rules, never both (`tables.md`); no box inside a box
+3. **Emphasis** — how many elements are bold or accented? If everything is emphasised, nothing is
+4. **Content** — any tile, column or field that answers no question (`design-quality.md`)
+5. **Space** — keep group spacing, cut decorative space
 
-Yoğunluk seviyesini düşürmek (`compact` → `dense`) bir *token* kararıdır ve satır yüksekliğiyle birlikte gelir; tek başına `font-size` küçültmek yoğunluk değil, sıkıştırmadır (`density-and-direction.md`).
+Lowering the density level (`compact` → `dense`) is a *token* decision and comes with row height attached; shrinking `font-size` alone is not density, it is compression (`density-and-direction.md`).
 
-## Doğrulama
+## Verification
 
-- [ ] Mevcut tipografi sistemi varsa kullanıldı; ikinci ölçek kurulmadı
-- [ ] Sistem yoksa Inter Variable **gerçekten yüklendi** (self-host veya doğrulanmış kurulum); fallback stratejisi raporlandı
-- [ ] Ölçülen sayı ve metriklerde monospace yok
-- [ ] Sayısal hücrelerde `tabular-nums lining-nums` + sağa hizalama + sabit ondalık
-- [ ] Kolondaki en uzun ve en kısa sayının son hanesi aynı dikey çizgide
-- [ ] Mono yalnızca teknik kimlikte (UUID, EIC, sayaç no, endpoint, hash, log); kimlik sola hizalı
-- [ ] Dense'te gövde 13/1.35/400, başlık 12/1.3/500; sapmalar kasıtlı
-- [ ] 400 altı ağırlık yok; soluklaştırma mürekkeple yapılmış
-- [ ] Kalabalık çözümü metin küçültmek değil; renk/ayırıcı/vurgu azaltılmış
+- [ ] Existing typography system used if present; no second scale created
+- [ ] With no system, Inter Variable **actually loaded** (self-hosted or verified); fallback strategy reported
+- [ ] No monospace on measured numbers or metrics
+- [ ] Numeric cells use `tabular-nums lining-nums` + right alignment + constant decimals
+- [ ] The longest and shortest number in a column end on the same vertical line
+- [ ] Monospace only on technical identifiers (UUID, codes, serials, endpoints, hashes, logs); identifiers left-aligned
+- [ ] At dense: body 13/1.35/400, heading 12/1.3/500; deviations deliberate
+- [ ] No weight below 400; de-emphasis achieved with ink
+- [ ] Clutter was not solved by shrinking text; colour, separators and emphasis were reduced instead

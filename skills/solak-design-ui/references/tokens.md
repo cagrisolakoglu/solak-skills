@@ -1,107 +1,109 @@
-# Token Katmanı
+# The Token Layer
 
-Token katmanı, komponentin hiçbir renk/ölçü/süre değerini kendi içinde tutmadığı anlamına gelir. Yoğunluk (`density-and-direction.md`) ve kolon grid'i (`grid.md`) de bu katmanın parçasıdır — komponent kararı değil.
+A token layer means no component holds a colour, measurement or duration of its own. Density (`density-and-direction.md`) and the column grid (`grid.md`) are part of this layer too — not component decisions.
 
-## Önce mevcut katmanı ara
+## Look for an existing layer first
 
-**Paralel bir sistem kurmak, hiç token kullanmamaktan kötüdür.** İki sistem varsa ikisi de bozulur. Yazmadan önce ara:
+**Standing up a parallel system is worse than using no tokens at all.** With two systems, both rot. Search before writing:
 
 ```bash
-rg -l "^\s*--[a-z-]+:" --type css --type scss -g '!node_modules'   # CSS custom property tanımları
-rg -l "tailwind.config|theme\s*:|createTheme|defineTheme"           # JS/TS tema nesnesi
-fd -g "*variables*.{css,scss,sass}" -g "*tokens*" -E node_modules   # adlandırılmış token dosyası
-fd -g "quasar.variables.*" -g "_variables.scss"                     # framework tema dosyası
+rg -l "^\s*--[a-z-]+:" --type css --type scss -g '!node_modules'   # CSS custom property definitions
+rg -l "tailwind.config|theme\s*:|createTheme|defineTheme"           # JS/TS theme object
+fd -g "*variables*.{css,scss,sass}" -g "*tokens*" -E node_modules   # named token files
+fd -g "_variables.scss" -g "*.theme.*" -E node_modules              # framework theme files
 ```
 
-Bulursan:
-- **Oku, isim şemasını çıkar** (`--color-*`, `$brand-*`, `theme.palette.*` — hangisi?)
-- Eksik token'ı **aynı şemaya** ekle; yeni bir isim ailesi başlatma
-- Değer değil **rol** eşleştir: mevcut `--bg-elevated` varsa `--surface-card` yazma, onu kullan
-- Katman yetersizse (ör. semantik durum rengi yok) eksik olanı ekle ve raporda söyle
+If you find one:
+- **Read it and extract the naming scheme** (`--color-*`, `$brand-*`, `theme.palette.*` — which is it?)
+- Add missing tokens **into that scheme**; do not start a new name family
+- Map by **role, not value**: if `--bg-elevated` exists, do not write `--surface-card`, use theirs
+- If the layer is genuinely insufficient (e.g. no semantic status colours), add what is missing and say so in the report
 
-Bulamazsan aşağıdaki katmanı yaz.
+If you find none, write the layer below.
 
-## Rol adı, değer adı değil
+## Name by role, not by value
 
 ```css
---surface-card: …      /* ✅ nerede kullanılacağını söyler */
---gray-100: …          /* ❌ ne olduğunu söyler, tema değişince yalan olur */
+--surface-card: …      /* ✅ says where it is used */
+--gray-100: …          /* ❌ says what it is; becomes a lie when the theme changes */
 --ink-muted: …         /* ✅ */
---text-gray-500: …     /* ❌ koyu temada gri-500 değil */
+--text-gray-500: …     /* ❌ not gray-500 in dark theme */
 ```
 
-Değer adlı token koyu temada anlamını kaybeder: `--gray-100` açık temada yüzey, koyu temada metindir. Rol adı iki temada da doğru kalır.
+A value-named token loses its meaning in dark theme: `--gray-100` is a surface in light and text in dark. A role name stays true in both.
 
-## Katman: dokuz grup
+## The layer: nine groups
 
-Aşağıdaki set sayaç okuma formunda iki temada ekran görüntüsüyle doğrulandı. Değerler `oklch` — açıklığı (ilk sayı) doğrudan okunabilir olduğu için kontrast hesabı gözle yapılabilir hale gelir.
+The set below was verified by screenshot in both themes. Values are `oklch` because the first number is lightness read directly, which makes contrast reasoning possible by eye.
 
 ```css
 :root {
   color-scheme: light dark;
 
-  /* 1 · Yüzey — üç seviye yeter: sayfa, kart, çökmüş */
+  /* 1 · Surfaces — three levels is enough: page, card, sunken */
   --surface-page:   oklch(97.5% 0.003 250);
   --surface-card:   oklch(100% 0 0);
   --surface-sunken: oklch(95.5% 0.004 250);
   --surface-field:  oklch(100% 0 0);
 
-  /* 2 · Mürekkep — üç seviye: güçlü, gövde, soluk. Yorumu yanına yaz. */
-  --ink-strong:   oklch(21% 0.012 260);   /* kart üzerinde 14.6:1 */
+  /* 2 · Ink — three levels: strong, body, muted. Note the ratio beside each. */
+  --ink-strong:   oklch(21% 0.012 260);   /* 14.6:1 on card */
   --ink-body:     oklch(34% 0.010 260);   /* 9.4:1 */
-  --ink-muted:    oklch(46% 0.010 260);   /* 5.6:1 — 4.5 sınırının üstünde */
+  --ink-muted:    oklch(46% 0.010 260);   /* 5.6:1 — above the 4.5 floor, not at it */
   --ink-onaccent: oklch(99% 0 0);
 
-  /* 3 · Çizgi — iki seviye: ayırıcı ve kenar */
+  /* 3 · Lines — two levels: divider and border */
   --line:        oklch(88% 0.005 260);
   --line-strong: oklch(72% 0.008 260);
 
-  /* 4 · Accent — TEK işlevsel accent. İkincisi hiyerarşiyi böler. */
+  /* 4 · Accent — ONE functional accent. A second one splits the hierarchy. */
   --accent:       oklch(46% 0.14 252);
   --accent-hover: oklch(39% 0.14 252);
   --accent-quiet: oklch(95% 0.03 252);
   --focus-ring:   oklch(52% 0.17 252);
 
-  /* 5 · Semantik durum — her biri ikon/metinle eşlenir, renk tek gösterge değil */
-  --danger: oklch(45% 0.17 27);   --danger-quiet:  oklch(96% 0.03 27);
-  --success: oklch(43% 0.11 155); --success-quiet: oklch(96% 0.03 155);
-  --warn: oklch(48% 0.11 75);     --warn-quiet:    oklch(96% 0.04 75);
+  /* 5 · Semantic status — each paired with an icon or text; colour is never the only cue */
+  --danger:  oklch(45% 0.17 27);   --danger-quiet:  oklch(96% 0.03 27);
+  --success: oklch(43% 0.11 155);  --success-quiet: oklch(96% 0.03 155);
+  --warn:    oklch(48% 0.11 75);   --warn-quiet:    oklch(96% 0.04 75);
 
-  /* 6 · Tipografi — tek aile, hiyerarşi ağırlık ve ölçekle (`typography.md`) */
+  /* 6 · Typography — one family, hierarchy by weight and scale (`typography.md`) */
   --font-ui: "Inter Variable", "Inter var", Inter,
-             ui-sans-serif, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "Cascadia Mono", Consolas, ui-monospace, "SF Mono", monospace;  /* yalnızca teknik kimlik */
+             ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;  /* technical identifiers only */
   --text-micro: 0.75rem;
   --text-label: 0.8125rem;
   --text-body:  0.875rem;
   --text-title: clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem);
   --leading-body:  1.45;
   --leading-label: 1.3;
-  --weight-body:  400;   /* taban: yoğun yüzeyde 400'ün altına inilmez */
+  --weight-body:  400;   /* floor: never below 400 in a dense surface */
   --weight-label: 500;
 
-  /* 7 · Yoğunluk — dikey ritim (density-and-direction.md) */
+  /* 7 · Density — vertical rhythm (`density-and-direction.md`) */
   --field-height: 36px;
   --field-pad-x:  10px;
   --space-field:  16px;
-  --space-group:  40px;   /* alan arasının ~2.5 katı */
+  --space-group:  40px;   /* ~2.5x field spacing */
   --space-card:   clamp(20px, 2vw, 32px);
 
-  /* 8 · Grid — yatay ritim (grid.md) */
+  /* 8 · Grid — horizontal rhythm (`grid.md`) */
   --grid-cols:   12;
   --grid-gutter: 20px;
   --content-max: 76ch;
 
-  /* 9 · Biçim — kenar yarıçapı ve hareket */
+  /* 9 · Shape and motion */
   --radius: 5px;  --radius-sm: 3px;
   --duration: 120ms;
   --ease: cubic-bezier(0.2, 0, 0.2, 1);
 }
 ```
 
-Sayı disiplini: üç yüzey, üç mürekkep, iki çizgi, bir accent. Beşinci gri tonu eklemek istiyorsan önce mevcut dördünün hangisinin işini yapmadığını söyle.
+Count discipline: three surfaces, three inks, two lines, one accent, one radius pair. Before adding a fifth grey, say which of the existing four is failing to do its job.
 
-## Yoğunluk ve tema aynı katmanda devralınır
+Note what is **absent** on purpose: there is no shadow token. Static surfaces are separated by borders; elevation is added only where something genuinely floats, and then one level suffices (`design-quality.md`).
+
+## Density and theme are inherited in the same layer
 
 ```css
 [data-density="comfortable"] { --field-height: 44px; --field-pad-x: 14px; --text-body: 0.9375rem;
@@ -111,63 +113,63 @@ Sayı disiplini: üç yüzey, üç mürekkep, iki çizgi, bir accent. Beşinci g
                                --space-field: 12px; --space-group: 32px; --grid-gutter: 12px; }
 ```
 
-Komponent `--field-height`'ı okur; hangi yoğunlukta olduğunu bilmez. Yoğunluk seviyesi eklemek komponente dokunmadan olur — olmuyorsa token katmanı sızmış.
+A component reads `--field-height`; it does not know which density it is in. Adding a density level should require no component changes — if it does, the token layer has leaked.
 
-## Koyu tema ters çevirme değildir
+## Dark theme is not an inversion
 
 ```css
 @media (prefers-color-scheme: dark) {
   :root {
     --surface-page:   oklch(19% 0.012 260);
-    --surface-card:   oklch(24% 0.013 260);   /* kart sayfadan YÜKSEK */
+    --surface-card:   oklch(24% 0.013 260);   /* card is HIGHER than page */
     --surface-sunken: oklch(21% 0.012 260);
-    --surface-field:  oklch(27.5% 0.014 260); /* girdi en yüksek yüzey */
+    --surface-field:  oklch(27.5% 0.014 260); /* input is the highest surface */
 
     --ink-strong: oklch(97% 0.004 260);
     --ink-body:   oklch(88% 0.005 260);
     --ink-muted:  oklch(72% 0.008 260);
 
-    --accent:       oklch(72% 0.13 252);      /* doygunluk düşer, açıklık yükselir */
-    --ink-onaccent: oklch(18% 0.02 260);      /* accent üzerindeki mürekkep de döner */
+    --accent:       oklch(72% 0.13 252);      /* chroma down, lightness up */
+    --ink-onaccent: oklch(18% 0.02 260);      /* ink on accent flips too */
   }
 }
 ```
 
-Üç kural:
+Three rules:
 
-1. **Açıklığı çevir, doygunluğu düşür.** Koyu zeminde aynı chroma titrer ve kenarları parlar.
-2. **Yükseklik sırası korunur ama değerler yeniden seçilir** — açık temada kart sayfadan *beyaz*, koyu temada sayfadan *açık*.
-3. **Accent üstündeki mürekkep de temaya bağlıdır.** `--ink-onaccent` sabit beyaz kalırsa koyu temada açık accent üzerinde okunmaz.
+1. **Invert lightness, lower chroma.** The same chroma vibrates on a dark ground and fringes at the edges.
+2. **Elevation order is preserved but values are re-picked** — in light theme the card is *whiter* than the page; in dark theme it is *lighter* than the page.
+3. **Ink on the accent is theme-dependent too.** If `--ink-onaccent` stays white, it becomes unreadable on a light accent in dark theme.
 
-Koyu temada yüzey açıklıkları 19-27.5% arasına sıkışır: **parlaklık farkıyla anlam taşımak burada işlemez.** `readonly`/`disabled` gibi ayrımları renksiz bir ipucuyla (kesik kenar, ikon) desteklemek zorunludur — `forms.md`.
+In dark theme, surface lightness compresses into the 19-27.5% range: **carrying meaning by brightness alone stops working there.** Distinctions such as `readonly` vs `disabled` must be supported by a colour-independent cue (dashed border, lock icon) — see `forms.md`.
 
-Kullanıcı tercihi varsa media query'yi tek kaynak yapma:
+If a user preference exists, do not make the media query the only source:
 
 ```css
-:root[data-theme="dark"]  { /* koyu değerler */ }
-:root[data-theme="light"] { /* açık değerler */ }
+:root[data-theme="dark"]  { /* dark values */ }
+:root[data-theme="light"] { /* light values */ }
 ```
 
-## Token olmayan şeyler
+## What is not a token
 
-- Tek komponentte bir kez kullanılan ölçü — orada dursun
-- İçerikten gelen renk (grafik serisi paleti → `design-quality.md`, semantik durum renklerinden türetilir)
-- Yüzeye özgü kompozisyon ölçüsü (bir tile'ın span'i)
+- A measurement used once in one component — leave it there
+- Colour that comes from content (chart series palette → `design-quality.md`, derived from the semantic colours)
+- A composition measurement specific to one surface (one tile's span)
 
-Her sayıyı token yapmak katmanı okunmaz bir sözlüğe çevirir. Ölçüt: **iki farklı yerde aynı kararı vermek gerekiyorsa token.**
+Making every number a token turns the layer into an unreadable dictionary. The test: **if the same decision has to be made in two different places, it is a token.**
 
-## Doğrulama
+## Verification
 
 ```bash
-# Komponentte kalmış hardcoded değer
+# hardcoded values left in components
 rg -n "#[0-9a-fA-F]{3,8}|rgba?\(|oklch\(" src/components -g '!*tokens*'
 rg -n ":\s*\d+px" src/components -g '!*tokens*'
 ```
 
-- [ ] Komponent dosyalarında palet/spacing/type sabiti yok; hepsi `var(--…)`
-- [ ] Token adları rol tabanlı (`--surface-card`), değer tabanlı değil (`--gray-100`)
-- [ ] Mürekkep token'larının yanında kontrast oranı yazılı, ≥ 4.5:1
-- [ ] Tek işlevsel accent; semantik durum renkleri ondan ayrı
-- [ ] Yoğunluk ve grid token'ları kökte, komponentte değil
-- [ ] Koyu tema ayrı ayrı seçilmiş; ters çevirme değil, `--ink-onaccent` dahil
-- [ ] Mevcut bir token katmanı varsa **o** kullanılmış, ikinci sistem kurulmamış
+- [ ] No palette, spacing or type constants in component files; everything via `var(--…)`
+- [ ] Token names are role-based (`--surface-card`), not value-based (`--gray-100`)
+- [ ] Contrast ratios noted beside ink tokens, all ≥ 4.5:1
+- [ ] One functional accent; semantic status colours separate from it
+- [ ] Density and grid tokens at the root, not in components
+- [ ] Dark theme values chosen individually — not an inversion — including `--ink-onaccent`
+- [ ] If a token layer already existed, **it** was used and no second system was created

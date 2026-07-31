@@ -1,19 +1,19 @@
-# Kolon Grid'i
+# The Column Grid
 
-Yoğunluk **dikey** ritmi kurar, grid **yatay** ritmi. İkisinden biri eksikse yüzey dağınık görünür — alanlar tek tek doğru boyutta olsa bile.
+Density sets **vertical** rhythm, the grid sets **horizontal** rhythm. Missing either one makes a surface look scattered — even when every field is individually the right size.
 
-Belirti: her alanın genişliği kendi içeriğine göre makul ama hiçbir alanın sol veya sağ kenarı bir diğeriyle hizalı değil; geniş ekranda yüzeyin sağ yarısı ölü alan. Bu **içerik genişlikli flex** ile kurulmuş formun imzasıdır.
+Symptom: each field's width is reasonable for its own content, but no field's left or right edge lines up with any other, and on a wide screen the right half of the surface is dead space. That is the signature of a form built from **content-width flex**.
 
-## Token'lar
+## Tokens
 
-Kolon sayısı ve oluk (gutter) yoğunluk gibi kök seviye token'dır, komponent kararı değil.
+Column count and gutter are root-level tokens like density, not component decisions.
 
 ```css
 :root {
   --grid-cols: 12;
   --grid-gutter: 20px;
   --grid-row-gap: var(--space-field);
-  --content-max: 76ch;        /* okuma kolonu tavanı */
+  --content-max: 76ch;        /* reading column ceiling */
 }
 
 [data-density="dense"]       { --grid-gutter: 12px; }
@@ -24,128 +24,130 @@ Kolon sayısı ve oluk (gutter) yoğunluk gibi kök seviye token'dır, komponent
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--grid-row-gap) var(--grid-gutter);
 }
-/* span daima grid-column-END üzerinden verilir — nedeni aşağıda */
+/* span is always expressed through grid-column-END — reason below */
 .col-2  { grid-column-end: span 2; }
 .col-3  { grid-column-end: span 3; }
 .col-4  { grid-column-end: span 4; }
+.col-5  { grid-column-end: span 5; }
 .col-6  { grid-column-end: span 6; }
+.col-7  { grid-column-end: span 7; }
 .col-12 { grid-column-end: span 12; }
-.start-1 { grid-column-start: 1; }   /* yeni satır başlatır */
+.start-1 { grid-column-start: 1; }   /* starts a new row */
 ```
 
-`minmax(0, 1fr)` zorunlu: `1fr` tek başına taşan içeriği (uzun seçenek metni, kesilmemiş sayı) kolon dışına çıkarır.
+`minmax(0, 1fr)` is mandatory: `1fr` on its own lets overflowing content (a long option label, an unwrapped number) escape the column.
 
-## Tuzak: `grid-column: span N` ile satır başlatma birbirini yer
+## Trap: `grid-column: span N` and starting a row cancel each other
 
-`grid-column: span 6` shorthand'i `span 6`'yı **start** değerine yazar, end'i `auto` bırakır. Aynı elemana satır başlatmak için `grid-column-start: 1` verildiğinde span bilgisi silinir ve alan **1 kolona** düşer. Belirti: bütün alanlar aynı, absürt derecede dar genişlikte; seçici ve girdi metinleri kırpılır.
+The `grid-column: span 6` shorthand writes `span 6` into the **start** value and leaves end as `auto`. When `grid-column-start: 1` is then applied to the same element to start a new row, the span information is erased and the field collapses to **one column**. Symptom: every field the same absurdly narrow width, with select and input text clipped.
 
 ```css
-/* ❌ span, .start-1 tarafından eziliyor */
+/* ❌ span gets overwritten by .start-1 */
 .col-6  { grid-column: span 6; }
 .start-1 { grid-column-start: 1; }
 
-/* ✅ start ve end ayrı özellikler, çakışmaz */
+/* ✅ start and end are separate properties and do not collide */
 .col-6  { grid-column-end: span 6; }
 .start-1 { grid-column-start: 1; }
 ```
 
-Bu kırılma yalnızca ekran görüntüsüyle yakalanır — CSS geçerli, hata vermez. Grid'e geçtikten sonra **mutlaka görüntü al.**
+This breakage is caught only by screenshot — the CSS is valid and silent. After moving to a grid, **always capture an image.**
 
-## Tuzak: `max-inline-size` bir media query özelliği değildir
+## Trap: `max-inline-size` is not a media query feature
 
-Komponent CSS'inde mantıksal özellikler (`inline-size`, `max-inline-size`) doğrudur; **media query'de** karşılığı yoktur — `@media (max-inline-size: 900px)` sessizce hiç eşleşmez. Media query'de `max-width`, kap sorgusunda `inline-size` kullan.
+Logical properties (`inline-size`, `max-inline-size`) are correct in component CSS, but they have **no media query equivalent** — `@media (max-inline-size: 900px)` silently never matches. Use `max-width` in media queries and `inline-size` in container queries.
 
 ```css
 @media (max-width: 900px) { :root { --grid-cols: 6; } }            /* ✅ */
-@container (max-inline-size: 900px) { :root { --grid-cols: 6; } }  /* ✅ kap sorgusu */
+@container (max-inline-size: 900px) { :root { --grid-cols: 6; } }  /* ✅ container query */
 ```
 
-## Uzlaşma: kolon hizası ile karakter genişliği çelişmez
+## Reconciliation: column alignment and character width do not conflict
 
-Form referansı "alan genişliği içerikle eşleşir" der (posta kodu tam genişlik olmaz), grid ise "kenarlar hizalanır" der. İkisi çelişmez — **görev bölüşümü** vardır:
+The forms reference says "field width matches its content" (a postcode is not full width); the grid says "edges line up". These do not conflict — there is a **division of labour**:
 
-| Kim | Neyi belirler |
-|-----|---------------|
-| Grid kolonu | Hücrenin **sol kenarını** ve tahsis edilen yeri |
-| `max-inline-size: Nch` | Alanın hücre içinde **ne kadarını doldurduğunu** |
+| Who | Decides |
+|-----|---------|
+| The grid column | The cell's **left edge** and the space allotted to it |
+| `max-inline-size: Nch` | How much of that cell the field **fills** |
 
 ```css
-.field { min-inline-size: 0; }              /* grid hücresinde taşmayı önler */
+.field { min-inline-size: 0; }              /* prevents overflow inside a grid cell */
 .field input { inline-size: 100%; }
-.field--code   { max-inline-size: 11ch; }   /* dönem, çarpan */
+.field--code   { max-inline-size: 11ch; }   /* period, rate */
 .field--date   { max-inline-size: 13ch; }
-.field--index  { max-inline-size: 16ch; }
+.field--serial { max-inline-size: 16ch; }
 ```
 
-Böylece sol kenarlar kolon çizgisine oturur, genişlik hâlâ beklenen karakter sayısını söyler. Sağ kenarları hizalamak için alanı gereksiz genişletmek **yanlıştır** — hizalanan şey kolon çizgisidir, alan kutusu değil.
+Left edges sit on the column line while the width still communicates the expected character count. Widening a field unnecessarily to align its right edge is **wrong** — what aligns is the column line, not the field box.
 
-## Hücrenin span'ini girdi değil, en geniş içerik belirler
+## The cell's span is set by its widest content, not by the input
 
-Hücrede üç içerik var: etiket, girdi, yardım/hata metni. Span'i **en geniş ölçü isteyen** belirler — bu çoğu zaman girdi değil, metindir.
+A cell holds three things: label, input, and help or error text. The span is decided by **whichever needs the most measure** — and that is usually not the input, but the text.
 
-Belirti: 11 karakterlik alana `col-2` verilmiş, altındaki yardım metni 28 karakterlik dar bir şeride sıkışıp iki satıra kırılıyor, hemen sağında **boş kolonlar** duruyor. Metin dar hendekte akarken yanında yer varsa span yanlış seçilmiştir.
+Symptom: an 11-character field was given `col-2`, and the help text beneath it is squeezed into a 28-character ribbon that wraps onto two lines, while **empty columns** sit right beside it. If text is flowing through a narrow ditch with space next to it, the span is wrong.
 
 ```html
-<!-- ❌ span girdiye göre: yardım metni kırılır, sağda 9 boş kolon -->
+<!-- ❌ span sized to the input: help text wraps, 9 empty columns to the right -->
 <div class="field col-2">
-  <label for="period">Dönem</label>
+  <label for="period">Period</label>
   <input class="w-code" id="period" value="2026-07" readonly>
-  <p class="field-hint">Açık dönem. Kapalı döneme okuma girilemez.</p>
+  <p class="field-hint">Open period. Closed periods cannot be edited.</p>
 </div>
 
-<!-- ✅ span metne göre; girdi max-inline-size ile 11ch kalır -->
-<div class="field col-4">…aynı içerik…</div>
+<!-- ✅ span sized to the text; the input stays 11ch via max-inline-size -->
+<div class="field col-4">…same content…</div>
 ```
 
 ```css
-.field-hint, .field-error { max-inline-size: 46ch; }   /* geniş hücrede de okuma ölçüsünü aşmaz */
+.field-hint, .field-error { max-inline-size: 46ch; }   /* does not exceed reading measure even in a wide cell */
 ```
 
-Kural: **yardım veya hata metni taşıyan hücreye en az ~34ch ayır.** Metnin ölçüsü hücrenin, girdinin ölçüsü `max-inline-size`'ın işidir; ikisi aynı sayı değildir.
+Rule: **give a cell carrying help or error text at least ~34ch.** The text's measure is the cell's job; the input's measure is `max-inline-size`'s job — they are not the same number.
 
-Yardım metnini satır sonuna kadar yaymak alternatif değil: metin girdinin sol kenarından başlar ama hiçbir şeyle hizalanmayan bir sağ kenarda biter.
+Stretching the help text to the end of the row is not an alternative: it would start at the input's left edge and end at a right edge that aligns with nothing.
 
-## Span seçimi
+## Choosing spans
 
-Aynı satırdaki alanlar toplamda kolon sayısını doldurur; artan yer boş kolonda bırakılır, alanlara dağıtılmaz.
+Fields on the same row add up to the column count; leftover space is left as empty columns, not distributed among the fields.
 
 ```html
 <div class="grid">
-  <div class="field col-6">…Tesis…</div>
-  <div class="field col-4">…Ölçüm Noktası…</div>
-  <!-- kalan 2 kolon kasıtlı boş -->
+  <div class="field col-6">…Customer…</div>
+  <div class="field col-4">…Plan…</div>
+  <!-- remaining 2 columns intentionally empty -->
 
-  <div class="field col-2">…Dönem…</div>
-  <div class="field col-2">…Okuma Tarihi…</div>
-  <div class="field col-4">…Okuyan…</div>
+  <div class="field col-4 start-1">…Period…</div>
+  <div class="field col-3">…Record date…</div>
+  <div class="field col-5">…Recorded by…</div>
 </div>
 ```
 
-Kural: **satır sonunda artan yeri son alana verme.** "Okuyan" alanını 6 kolona yaymak onu Tesis kadar önemli gösterir; hiyerarşi span ile konuşur.
+Rule: **do not hand the row's leftover space to the last field.** Spreading "Recorded by" across 6 columns makes it look as important as "Customer"; hierarchy speaks through span.
 
-## İlişkili alanlar aynı span'i paylaşır
+## Related fields share a span
 
-Karşılaştırılacak alanlar (önceki endeks / güncel endeks, başlangıç / bitiş tarihi, min / maks tutar) **eşit span** alır. Farklı span, kullanıcıya olmayan bir önem farkı bildirir.
+Fields meant to be compared (previous balance / current balance, start date / end date, min amount / max amount) get **equal spans**. A different span announces an importance difference that does not exist.
 
-## Satır anlamsal bir birimdir
+## A row is a semantic unit
 
-Aynı satırdaki alanlar kullanıcıya "bunlar aynı türden" der. Tür karışırsa satır bilgi taşımaz, yalnızca yer doldurur.
+Fields on the same row tell the user "these are the same kind of thing". When kinds mix, the row carries no information and merely fills space.
 
-Sayaç okuma formunda üç tür var, her biri kendi satırını alıyor:
+A usage-record form has three kinds, each taking its own row:
 
-| Satır | Alanlar | Neden birlikte |
-|-------|---------|----------------|
-| Cihaz sabitleri | Sayaç Seri No, Çarpan | Okumadan bağımsız, kayıt boyunca değişmez |
-| Okumalar | Önceki Endeks, Güncel Endeks | Karşılaştırılacak çift → **eşit span** |
-| Türetilmiş | Hesaplanan Tüketim, Geçmiş Ortalama | Girdi değil, sonuç |
+| Row | Fields | Why together |
+|-----|--------|--------------|
+| Fixed attributes | Serial number, Rate | Independent of the reading, unchanged for the record's life |
+| Readings | Previous balance, Current balance | A pair to be compared → **equal span** |
+| Derived | Computed amount, Trailing average | Not inputs, but results |
 
-Seri no ile önceki endeksi aynı satıra koymak ikisini aynı cins gösterir; biri kimlik, öbürü ölçüm. Satırı bölmek yer kaybı değil, bilgi kazancıdır.
+Putting the serial number on the same row as the previous balance implies they are the same kind of value; one is an identifier, the other a measurement. Splitting the row is not lost space, it is gained information.
 
-Tersi de geçerli: bir satırda tek başına duran dar alan **kasıtlı bir sınır** bildirir. Bir grupta böyle iki-üçten fazla satır varsa sınır değil dağınıklık üretilmiş; gruplama yeniden düşünülmeli.
+The converse also holds: a narrow field alone on a row announces a **deliberate boundary**. More than two or three such rows in one group is not boundary-setting but disorder — reconsider the grouping.
 
-## Daralma: kolon sayısı düşer, span'ler yeniden eşlenir
+## Narrowing: column count drops, spans are remapped
 
-Alanları tek tek `100%` yapmak grid'i çözmez, yok eder. Kolon sayısını azalt; span'ler otomatik uyumlanır.
+Setting each field to `100%` does not fix the grid, it destroys it. Reduce the column count; spans adapt.
 
 ```css
 @media (max-width: 900px) { :root { --grid-cols: 6; }
@@ -155,30 +157,30 @@ Alanları tek tek `100%` yapmak grid'i çözmez, yok eder. Kolon sayısını aza
   [class*="col-"] { grid-column-end: span 1; } }
 ```
 
-**Kolon sayısından büyük kalan her span sessizce taşırır.** 6 kolonlu grid'de eşlenmemiş `span 7` örtük bir kolon yaratır; grid 7 kolona çıkar, yüzey kabından dışarı sarkar. Hata vermez, konsola bir şey yazmaz — yalnızca ekran görüntüsünde görünür. Daralma yazarken **her** span sınıfını say, kullandığın en büyüğünü unutma.
+**Any span left larger than the column count overflows silently.** In a 6-column grid an unmapped `span 7` creates an implicit column; the grid becomes 7 columns wide and the surface hangs outside its container. No error, nothing in the console — visible only in a screenshot. When writing the narrowing rules, count **every** span class and do not forget the largest one in use.
 
-Tek kolona düşen alanlarda `max-inline-size` **kalır** — sayaç seri no alanı telefonda da tam genişlik olmamalı, aksi halde dokunmatik klavyede yanlış hizalama hissi verir. Yalnızca yardım metni ve hata metni tam genişliğe yayılır.
+`max-inline-size` **stays** on fields that collapse to one column — a serial-number field should not be full width on a phone either; otherwise it feels misaligned against the touch keyboard. Only help text and error text expand to full width.
 
-## Ölü alan bir grid sorunudur
+## Dead space is a grid problem
 
-Geniş ekranda içerik solda toplanıp sağ yarı boş kalıyorsa iki meşru çözüm var; **üçüncüsü yok** (alanları gereksiz genişletmek çözüm değildir):
+If content clusters left on a wide screen and the right half sits empty, there are two legitimate fixes and **no third** (widening fields unnecessarily is not a fix):
 
-1. **Kabı daralt** — form kartını `--content-max` ile sınırla, ortala veya sola sabitle. Uzun formda tercih edilen.
-2. **Yan kolonu doldur** — özet, geçmiş kayıt, doğrulama listesi gibi **gerçek** bir içerik koy. Doldurmak için içerik uyduruluyorsa 1. seçeneğe dön.
+1. **Narrow the container** — bound the form card with `--content-max`, centred or pinned left. Preferred for long forms.
+2. **Fill the side column** — put **real** content there: a summary, recent records, a validation list. If content is being invented to fill it, go back to option 1.
 
-Henüz yüklenmemiş gerçek bir alan da içeriktir: "Geçmiş Dönem Ortalaması" iskeleti, hesaplanan tüketim bloğunun yanındaki boş kolonları meşru şekilde doldurur — kullanıcı o değerin geleceğini bilir. Ama yalnızca boşluğu kapatmak için eklenen bir tile veya tekrar eden bir özet içerik değil, dolgudur.
+A real field that has not loaded yet is also content: a "Trailing average" skeleton legitimately fills the empty columns beside a computed-value block, because the user knows that value is coming. But a tile added only to close a gap, or a repeated summary, is filler.
 
-## Etiket ve alan hizası
+## Label and field alignment
 
-Etiket üstte yerleşimde etiketin sol kenarı alanın sol kenarıyla, yani kolon çizgisiyle **aynı** olmalı. `padding-inline-start` ile içe alınmış etiket grid'i gözle bozar.
+With labels above fields, the label's left edge must be **the same** as the field's left edge, i.e. the column line. A label inset with `padding-inline-start` visibly breaks the grid.
 
-## Doğrulama
+## Verification
 
-- [ ] Her alan bir kolon çizgisinden başlıyor (tarayıcı grid overlay ile bak)
-- [ ] Karşılaştırılan alanlar eşit span
-- [ ] Satır sonu artan yer boş kolonda, son alana yayılmış değil
-- [ ] Yardım/hata metni taşıyan hücre ≥ 34ch; metin dar şeride kırılmıyor
-- [ ] Her satır tek türden alan taşıyor (kimlik / ölçüm / türetilmiş karışmamış)
-- [ ] Daralma kolon sayısıyla yapılıyor, alan başına `100%` ile değil
-- [ ] Daralmada **her** span sınıfı yeniden eşlenmiş; kolon sayısından büyük span kalmamış
-- [ ] Geniş ekranda ölü alan yok: ya kap daraltılmış ya yan kolonda gerçek içerik var
+- [ ] Every field starts on a column line (check with the browser's grid overlay)
+- [ ] Compared fields have equal spans
+- [ ] Row leftovers sit in empty columns, not spread into the last field
+- [ ] Cells carrying help or error text are ≥ 34ch; text does not wrap into a narrow ribbon
+- [ ] Each row carries one kind of field (identifier / measurement / derived not mixed)
+- [ ] Narrowing is done by column count, not per-field `100%`
+- [ ] **Every** span class remapped when narrowing; no span exceeds the column count
+- [ ] No dead space on wide screens: either the container is bounded or the side column holds real content
