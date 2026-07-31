@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements data-dense enterprise UI — tables and data grids, filter and query panels, data-entry forms, and metric dashboards. Decides row/field density deliberately, aligns numbers and text by type, designs the states real data produces (empty, loading, partial, error, overflow, too-many-results), and keeps everything on the project's token layer. Tech-agnostic: semantic HTML + CSS custom properties, adapted to the detected framework. Use when the user works on a table, grid, filter panel, form, report screen or dashboard — "tabloyu düzelt", "filtre paneli tasarla", "bu ekran kalabalık", "dashboard yap" — or invokes /solak-design-ui. Self-contained: carries its own quality criteria, token layer, formatting and chart rules — no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 0.4.0
+  version: 0.5.0
   author: cagrisolakoglu
   tags: [design, frontend, ui, data-dense, enterprise]
   status: draft
@@ -49,6 +49,7 @@ Dashboard'daki grafikler **kapsam içindedir**: tip, palet, eksen ve tooltip kur
    Yüzeyden bağımsız **kesişen** referanslar:
    - `references/design-quality.md` — her yüzeyde zorunlu: kalite ölçütü, kaçınılacak kalıplar, grafik kararları
    - `references/grid.md` — çok alanlı/çok kolonlu her yüzeyde zorunlu (yatay ritim)
+   - `references/typography.md` — her yüzeyde zorunlu: font ailesi, figür seti, mono kapsamı, ağırlık tabanı
    - `references/formatting.md` — sayı, tarih, birim veya para görünen her yüzeyde zorunlu
    - `references/tokens.md` — token katmanı yoksa veya mevcut katman okunacaksa
 3. **Yoğunluğu karara bağla** — `references/density-and-direction.md`: `comfortable` / `compact` / `dense`. Karar üç sorudan çıkar (kayıt sayısı, tarama mı okuma mı, ekran ve girdi). Gerekçeyi çıktı raporunda yaz.
@@ -69,7 +70,9 @@ Bu skill **kendi kendine yeter**: kalite ölçütleri, kaçınılacak kalıplar,
 - [ ] Renk tek gösterge değil — ikon veya metin eşlik ediyor
 - [ ] Klavye ile gezinilebiliyor, `focus-visible` görünür; grid/form içi gezinme dahil
 - [ ] Boş / yükleniyor / hata durumları var
-- [ ] Ölçülen sayılar `tabular-nums` ve sağa hizalı; kimlik numaraları sola (`references/formatting.md`)
+- [ ] Ölçülen sayılar `tabular-nums lining-nums` ve sağa hizalı; kimlik numaraları sola (`references/formatting.md`)
+- [ ] Monospace yalnızca teknik kimlikte (UUID/EIC/sayaç no/endpoint/hash); metrik ve tablo sayısında yok (`references/typography.md`)
+- [ ] Gövde ağırlığı ≥ 400; soluklaştırma mürekkeple, ağırlıkla değil
 - [ ] Sayı/tarih biçimi yerel ayara uygun ve elle kurulmamış (`Intl`); ondalık basamak kolon boyunca sabit
 - [ ] Eksik veri sıfırdan ayırt edilebiliyor (`—`), hesaba dahil edilmemiş
 - [ ] Komponentte hardcoded palet / spacing / type değeri yok

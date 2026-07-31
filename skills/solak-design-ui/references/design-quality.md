@@ -27,6 +27,8 @@ Bunlar bu alanda tekrar tekrar üretilen, tanınabilir şekilde "düşünülmemi
 - **Şov derinliği** — gradient, büyük gölge, cam efekti; ama yükseklik hiçbir şey bildirmiyor. Derinlik anlam taşımıyorsa gürültüdür.
 - **Dikkat çeken hareket** — operasyonel ekranda animasyon bilgi taşımaz, yorar. Hareket yalnızca durum değişimini veya süreklilik ilişkisini gösterir.
 - **Dekoratif ikon enflasyonu** — başlıklarda süs ikon, veride anlam taşıyan ikon yok.
+- **Küçültülerek "sadeleştirilmiş" ekran** — kalabalığa çözüm olarak font küçültülmüş. Kalabalık okunmazlığa çevrilmiş; azaltılması gereken renk, ayırıcı ve vurgudur (`typography.md`, madde 8).
+- **İnce ağırlık** — 300 veya altı gövde. 13px'te griye düşer, koyu temada ışır. Vurgu azaltmak için ağırlık değil mürekkep düşürülür.
 
 ## Gerekli nitelikler
 

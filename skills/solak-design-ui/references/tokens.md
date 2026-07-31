@@ -67,13 +67,18 @@ Aşağıdaki set sayaç okuma formunda iki temada ekran görüntüsüyle doğrul
   --success: oklch(43% 0.11 155); --success-quiet: oklch(96% 0.03 155);
   --warn: oklch(48% 0.11 75);     --warn-quiet:    oklch(96% 0.04 75);
 
-  /* 6 · Tipografi — tek aile, hiyerarşi ağırlık ve ölçekle */
-  --font-ui: ui-sans-serif, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  /* 6 · Tipografi — tek aile, hiyerarşi ağırlık ve ölçekle (`typography.md`) */
+  --font-ui: "Inter Variable", "Inter var", Inter,
+             ui-sans-serif, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, "SF Mono", monospace;  /* yalnızca teknik kimlik */
   --text-micro: 0.75rem;
   --text-label: 0.8125rem;
   --text-body:  0.875rem;
   --text-title: clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem);
-  --weight-label: 550;
+  --leading-body:  1.45;
+  --leading-label: 1.3;
+  --weight-body:  400;   /* taban: yoğun yüzeyde 400'ün altına inilmez */
+  --weight-label: 500;
 
   /* 7 · Yoğunluk — dikey ritim (density-and-direction.md) */
   --field-height: 36px;
@@ -102,6 +107,7 @@ Sayı disiplini: üç yüzey, üç mürekkep, iki çizgi, bir accent. Beşinci g
 [data-density="comfortable"] { --field-height: 44px; --field-pad-x: 14px; --text-body: 0.9375rem;
                                --space-field: 20px; --space-group: 48px; --grid-gutter: 24px; }
 [data-density="dense"]       { --field-height: 28px; --field-pad-x: 8px;  --text-body: 0.8125rem;
+                               --text-label: 0.75rem; --leading-body: 1.35;
                                --space-field: 12px; --space-group: 32px; --grid-gutter: 12px; }
 ```
 
