@@ -31,6 +31,15 @@ Ten rules, in priority order:
 
 **Greyscale test:** render the design without colour. If the hierarchy still reads, it was real. If everything flattens, hierarchy was being carried by colour — and colour is the one channel a portion of users, greyscale printouts and dim screens do not receive.
 
+Automate it; it costs one line in the screenshot pass and it is the cheapest way to find colour-only information:
+
+```js
+await page.evaluate(() => { document.documentElement.style.filter = 'grayscale(1)'; });
+await page.screenshot({ path: 'screenshots/grayscale-1440.png', fullPage: true });
+```
+
+What this reliably catches: a delta whose good/bad lives only in hue; an error surface marked only by a tinted border and fill; chart series separated only by colour; a status badge whose icon was omitted "because the colour says it".
+
 ## Patterns to avoid
 
 These are the repeatedly produced, recognisably unconsidered surfaces in this space:
@@ -86,6 +95,37 @@ This skill builds charts with its own rules; no external skill is required:
 - **Tooltips restate data, they do not introduce new data**; they must be keyboard reachable
 - Chart colours derive from the semantic colours in `tokens.md`, so contrast and theme behaviour come for free
 
+### The SVG must scale uniformly, and labels must live inside it
+
+Two mistakes that always travel together:
+
+```html
+<!-- ❌ non-uniform scaling distorts marks; labels outside drift out of alignment -->
+<svg viewBox="0 0 300 100" preserveAspectRatio="none">…</svg>
+<div class="ticks"><span>Apr</span><span>May</span>…</div>
+
+<!-- ✅ uniform scaling; ticks share the marks' coordinate system -->
+<svg viewBox="0 0 700 130" role="img" aria-label="…">
+  <rect …/><text x="84" y="124" text-anchor="middle">Apr</text>
+</svg>
+```
+```css
+.chart svg { inline-size: 100%; aspect-ratio: 700 / 130; block-size: auto; }
+```
+
+`preserveAspectRatio="none"` stretches bar widths and gaps unevenly, and axis labels placed in a sibling flex row cannot follow. Give the element an `aspect-ratio` equal to the `viewBox` ratio and put the labels inside the SVG; then marks and labels scale together at every width.
+
+### Distinguish series by fill *and* outline
+
+Two series separated only by hue collapse into one in greyscale. A solid fill against a light fill with a 1px outline survives every rendering condition and costs nothing:
+
+```css
+.bar-a { fill: var(--accent); }
+.bar-b { fill: var(--accent-quiet); stroke: var(--accent); stroke-width: 1; }
+```
+
+The same applies to lines (solid vs dashed) and points (circle vs square).
+
 Deeper visualisation work (complex multi-series analysis, bespoke palette generation) can **optionally** be handed to a dedicated data-visualisation skill if one is available; this skill works fully without one.
 
 ## Checklist
@@ -99,5 +139,6 @@ Deeper visualisation work (complex multi-series analysis, bespoke palette genera
 - [ ] Every interaction state designed, `focus-visible` included
 - [ ] Every data state designed — the happy path alone is not enough
 - [ ] No filler content; every component answers a question
-- [ ] Hierarchy survives the greyscale test
+- [ ] Hierarchy survives the greyscale test, verified on a screenshot rather than assumed
+- [ ] Charts scale uniformly; axis labels inside the SVG; series distinguished by fill and outline
 - [ ] Believable as a screenshot of a real product

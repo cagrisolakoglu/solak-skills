@@ -98,6 +98,28 @@ A monospace identifier is **left-aligned** (an identifier is not a number, see `
 
 500 is a **default, not a ceiling**: using 600 to mark a decision column is a legitimate deviation — but it must be deliberate, and not on every heading.
 
+### Weights are a closed token set, not a continuum
+
+A variable font accepts any value between 400 and 600, and that is a trap: components drift to 450, 550, 650, and after a few weeks two surfaces in the same product carry six different weights that nobody chose. Nothing looks broken; the family just stops reading as one system.
+
+Expose exactly three steps and use only those:
+
+```css
+:root {
+  --weight-body:   400;   /* body, cells, help text */
+  --weight-label:  500;   /* headings, labels, badges */
+  --weight-strong: 600;   /* the ONE emphasis step: decision column, total row, page title */
+}
+```
+
+If a component "needs" 550, the question is which of the three it actually belongs to. A fourth step means the hierarchy is being solved with weight where it should be solved with size, space or ink.
+
+This is easy to audit and worth auditing:
+
+```bash
+rg -n "font-weight: [0-9]" src   # anything but var(--weight-*) is a drift
+```
+
 ### If the heading is smaller than the body, it needs a second cue
 
 12px headings are smaller than 13px body text. In dense product UI this is deliberate, but it only works **if the heading carries a signal beyond size**:
@@ -138,4 +160,5 @@ Lowering the density level (`compact` → `dense`) is a *token* decision and com
 - [ ] Monospace only on technical identifiers (UUID, codes, serials, endpoints, hashes, logs); identifiers left-aligned
 - [ ] At dense: body 13/1.35/400, heading 12/1.3/500; deviations deliberate
 - [ ] No weight below 400; de-emphasis achieved with ink
+- [ ] Weights come from a closed three-step token set; no literal `font-weight` values in components
 - [ ] Clutter was not solved by shrinking text; colour, separators and emphasis were reduced instead

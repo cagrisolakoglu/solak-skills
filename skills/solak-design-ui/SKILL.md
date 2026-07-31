@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements data-dense product UI — tables and data grids, filter and query panels, data-entry forms, and metric dashboards. Decides row and field density deliberately, aligns numbers and text by type, designs the states real data produces (empty, loading, partial, error, overflow, too many results), and keeps every value on a token layer. Defaults to restraint: hierarchy comes from type, space and alignment rather than boxes, borders and colour. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered or unreadable, or invokes /solak-design-ui. Self-contained: carries its own quality criteria, token layer, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.1.0
+  version: 1.2.0
   author: cagrisolakoglu
   tags: [design, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: draft
@@ -62,7 +62,7 @@ Charts inside dashboards **are** in scope: type, palette limits, axes and toolti
 5. **Use or write tokens** — If a token layer exists, **use it**; never build a parallel system. Otherwise follow `references/tokens.md`: palette, type scale, spacing, density, **column count and gutter**, duration and easing as CSS custom properties.
 6. **Build** — Semantic HTML (`table`/`th`/`fieldset`/`label`, not a pile of generic `div`s). Every state from the surface reference, plus every interaction state: hover, `focus-visible`, active, disabled/readonly, selected.
 7. **Motion (if any)** — `transform`, `opacity`, `clip-path` only. Write the `prefers-reduced-motion` counterpart.
-8. **Verify** — Run the gates below and report the result. **Take screenshots at 320/768/1440 in both light and dark**; some breakages appear only in the image, while the CSS stays valid and silent. On a scrollable surface, capture it **while scrolled** — sticky failures show up nowhere else.
+8. **Verify** — Run the gates below and report the result. **Take screenshots at 320/768/1440 in both light and dark**; some breakages appear only in the image, while the CSS stays valid and silent. On a scrollable surface, capture it **while scrolled** — sticky failures show up nowhere else. Take one **greyscale** capture as well (`filter: grayscale(1)`) — it is the cheapest way to find information that exists only in colour.
 
 This skill is **self-contained**: quality criteria, token layer, typography, formatting and chart rules all live under `references/`. It depends on no external rule file and no other skill.
 
@@ -84,6 +84,7 @@ This skill is **self-contained**: quality criteria, token layer, typography, for
 - [ ] Fields and columns start on shared grid lines — no "each one its own width" layout built from content-width flex (`references/grid.md`)
 - [ ] `readonly` and `disabled` are distinguishable **in dark theme too**
 - [ ] `references/design-quality.md`: none of the avoided patterns present, at least five required qualities met
+- [ ] Greyscale capture checked: no information (status, good/bad, series identity) exists only in colour
 
 **Reported** — if missing, say so; work does not stop:
 
