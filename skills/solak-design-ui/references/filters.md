@@ -92,6 +92,8 @@ When a filter hits the server or is otherwise slow:
 
 ### Staleness is announced, not dimmed
 
+> This is the canonical statement of the rule; `interaction-and-states.md` cites it and adds the general loading taxonomy, retry naming and offline behaviour.
+
 The obvious implementation of "show it is pending" is `opacity` on the result region. **It fails the contrast gate.** `opacity: 0.45` on a table drags every value below 4.5:1 at once, and it is worst in dark theme where muted ink already sits close to the surface. The user is asked to read numbers that are no longer readable — in exchange for information that a single line of text conveys better.
 
 ```css

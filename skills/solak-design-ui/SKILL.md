@@ -1,8 +1,8 @@
 ---
 name: solak-design-ui
-description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, error and overflow states. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
+description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, stale, error, conflict and overflow states, and the feedback, retry, undo and confirmation behaviour around them. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, responsive, interaction-state, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.5.0
+  version: 1.6.0
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: draft
@@ -60,7 +60,8 @@ Ten stages. The procedure, tables and templates live in `references/ux-workflow.
 4. **Task flow and friction** — Entry to completion, where the user waits, where they err, what context must survive. *Gate: the primary task has an entry, an ordered sequence and a completion state.*
 5. **Rough layout** — `references/layout-and-information-architecture.md`: regions, reading order, action placement, progressive disclosure, master-detail, sticky context, narrow-screen order, and reserved space for every state. Produce an ASCII wireframe.
    Then `references/responsive-grid.md`: give each region a **minimum usable width**, build the wide composition, and **derive breakpoints by reducing width until the layout fails** — never from device names. Viewport queries drive the page shell, container queries drive reusable components. *Gate: no styling before the wireframe and the failure record exist.*
-6. **Usability pass** — Ten heuristics against the wireframe; interaction count, safe defaults, shortcuts, focus order, touch targets. *Gate: if the layout does not visibly make the task easier, revise it rather than styling around it.*
+6. **Usability pass and state inventory** — Ten heuristics against the wireframe; interaction count, safe defaults, shortcuts, focus order, touch targets.
+   Then `references/interaction-and-states.md`: list every state the surface can reach and give each one a trigger, what the user sees, what they can do and how it exits. States change how much space a region needs, so they are decided **here, with the wireframe, not after the styling**. *Gate: if the layout does not visibly make the task easier, revise it rather than styling around it. No state left without a recovery path.*
 7. **Density, typography and direction** — Now that volume and behaviour are known: `references/density-and-direction.md`, then `references/typography.md`. Typography is **role-based, tokenised and verified with real data**: use the existing product system first; with no system, Inter Variable is the default; measured numbers take tabular lining figures and right alignment, monospace is reserved for technical identifiers, and the font is not "chosen" until its delivery is verified. Choose the direction and **get it approved**; do not assume dark theme. *Gate: density justified in one sentence.*
 8. **Implementation TODO** — Dependency-ordered, file-level, one verifiable result and an acceptance criterion per item. **Five or more work items → fill in `templates/design-todo.md`. Fewer than five → an inline list in the response is enough.** The discipline is identical either way; only the artefact changes. *Gate: no code before the list exists, in one form or the other.*
 9. **Execute step by step** — Per item: read the files, restate the acceptance criterion, make the smallest scoped change, run checks, validate, mark complete, record the decision. Structure before visuals; states and accessibility are not postponed.
@@ -78,6 +79,7 @@ Cross-cutting, independent of surface:
 - `references/design-quality.md` — always: quality criteria, restraint rules, patterns to avoid, chart decisions
 - `references/grid.md` — any multi-field or multi-column surface: the column grid **inside** a surface
 - `references/responsive-grid.md` — any multi-region page: how the **composition** changes with available width, breakpoint derivation, container queries
+- `references/interaction-and-states.md` — at Stage 6, and again at Stage 9: the state inventory, feedback-surface choice, loading kinds, error and retry, stale and partial, conflict, undo vs confirmation, offline, background work
 - `references/formatting.md` — wherever numbers, dates, units or money appear
 - `references/tokens.md` — when there is no token layer, or an existing one must be read
 
@@ -95,6 +97,12 @@ This skill is **self-contained**: UX workflow, layout, quality criteria, token l
 - [ ] Flow and friction evaluated
 - [ ] An implementation TODO list was created and executed item by item, each validated
 - [ ] Loading / first-use empty / filtered no-results / error states designed, and first-use is not the same component as no-results
+- [ ] Every state in the inventory has a trigger, visible feedback, a user action and an exit condition
+- [ ] Refresh keeps usable data on screen — never emptied, never dimmed to signal staleness
+- [ ] Errors state what failed and what to do; retry **names what it retries** and does not clear existing content
+- [ ] Destructive actions state their scope; irreversible ones confirm, routine reversible ones offer undo instead
+- [ ] Critical confirmation is never toast-only; loading and pending carry text, not just a spinner
+- [ ] Concurrent edits cannot silently overwrite newer data; user input survives a validation or request failure
 - [ ] The primary task is completable by keyboard; `focus-visible` is visible
 - [ ] Text contrast ≥ 4.5:1 (large text ≥ 3:1), status colours included
 - [ ] Colour is never the only indicator — an icon or text accompanies it
@@ -117,6 +125,8 @@ This skill is **self-contained**: UX workflow, layout, quality criteria, token l
 **Reported** — if missing, say so; work does not stop:
 
 - [ ] Partial data / too many results / overflowing cell states
+- [ ] Offline behaviour, background operations, optimistic updates — implemented or explicitly out of scope
+- [ ] Data freshness shown where it matters; cached or delayed data is not labelled live
 - [ ] `prefers-reduced-motion` counterpart
 - [ ] Both themes look deliberate
 - [ ] Density choice justified
@@ -145,6 +155,14 @@ Layout
                 4. dense table        5. selection + bulk
   Narrow-screen strategy: rows fold to cards below 560px — the identity block
   measured 52% of a 320px viewport, so horizontal scroll was rejected
+
+States
+  Initial loading: real headers, skeleton values only, no layout shift
+  Refresh: existing rows stay readable; stale banner + last-updated time
+  Partial: 7 unavailable records named and excluded from totals
+  Error: the failed source is named; retry affects only that source
+  Destructive: bulk dismiss states its scope and offers undo for 10s
+  Offline: not implemented — declared as a risk
 
 Visual system
   Density: dense (28px rows) — 400+ records, operator scanning, desktop primary

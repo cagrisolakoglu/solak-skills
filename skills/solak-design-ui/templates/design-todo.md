@@ -56,11 +56,16 @@ strength of "it looks right".
       *Accept:* …
 
 ### 3. States
-- [ ] Loading — *Accept:* real content height, no layout shift on arrival
+*From the inventory built at the usability stage. Drop the rows that do not apply; do not add one that has no exit condition.*
+- [ ] Initial loading — *Accept:* real labels and headers, skeleton values only, no layout shift on arrival
+- [ ] Refresh — *Accept:* existing data stays readable at full contrast; staleness carried by text, not opacity
 - [ ] First use — *Accept:* explains what this is and offers the first action
 - [ ] No results (filtered) — *Accept:* separate component, names the responsible filter, offers an exit
-- [ ] Error and retry — *Accept:* scoped to the failing region, retry works
-- [ ] Partial / stale — *Accept:* incomplete data is not presented as complete
+- [ ] Error and retry — *Accept:* scoped to the failing region; the retry control names what it retries
+- [ ] Partial / stale — *Accept:* incomplete data is not presented as complete; missing is never zero
+- [ ] Pending / saved / unsaved — *Accept:* stated in words; a vanishing toast is not the only proof
+- [ ] Destructive and reversible actions — *Accept:* scope stated; confirm if irreversible, undo if not
+- [ ] Conflict — *Accept:* newer data cannot be silently overwritten *(or: out of scope, single-writer surface)*
 
 ### 4. Responsive
 - [ ] Desktop — *Accept:* …

@@ -26,6 +26,27 @@ Numeric alignment, figure sets and identifier treatment come from `typography.md
 
 Left-aligning a number, or using proportional figures, breaks the one job a table has: comparison. The header cell must sit on the **same** axis as the body; if a right-aligned numeric column has a left-aligned header, the eye tracks two different edges.
 
+### The alignment class loses a specificity fight it looks like it should win
+
+A table component that sets a base alignment on its own cells outranks the utility class that does the actual work:
+
+```css
+.mini th, .mini td { text-align: start; }   /* (0,1,1) */
+.is-num            { text-align: right; }   /* (0,1,0) — loses */
+```
+
+Every money column silently falls back to left. Nothing errors, the class is still in the markup, and a code review that greps for `is-num` finds it present. Give the alignment classes the component's own scope so they outrank the base rule, and verify by reading the computed value rather than the stylesheet:
+
+```css
+.mini .is-num, .mini .num { text-align: end; font-variant-numeric: tabular-nums lining-nums; }
+```
+
+```js
+getComputedStyle(cell).textAlign   // must be "end"/"right" — not "what the class says"
+```
+
+The same trap sits one level up: **component rules written as bare element selectors** (`table`, `th, td`, `tbody tr:nth-child(even) td`) apply to every table on the page, not the one they were written for. Observed consequences from a single dense-grid rule set leaking: zebra backgrounds painted over another table's scroll cue, a `min-inline-size` intended for a 12-column grid forced a 320px page to scroll sideways, and a sticky `tfoot` detached a small table's total row. A dense-grid rule set is a component. Scope it (`.data-grid table { … }`); do not let it define what a `<table>` is.
+
 ## Column priority and narrowing
 
 Sort columns into three priorities: **identity** (which record), **decision** (the value the user came for), **detail** (everything else).
@@ -210,6 +231,8 @@ State three things explicitly:
 For rounding discrepancies (sum of displayed values ≠ displayed sum) see `formatting.md`.
 
 ## States — design all of them
+
+> Table-specific below. The cross-cutting rules — the state inventory, choosing a feedback surface, refresh vs initial loading, retry naming, undo vs confirmation, conflict and offline — are in `interaction-and-states.md`.
 
 | State | Design |
 |-------|--------|

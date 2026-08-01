@@ -115,6 +115,8 @@ If saving happens automatically, **show the state**: "Saved · 14:32". Silent au
 
 ## States
 
+> Form-specific below. Button label progression, unsaved-change protection, server validation, conflicting concurrent edits, offline queueing and undo vs confirmation are in `interaction-and-states.md`.
+
 | State | Design |
 |-------|--------|
 | Empty form | Defaults are sensible and visible; no hidden defaults |

@@ -184,7 +184,7 @@ See `layout-and-information-architecture.md`. Return here afterwards.
 
 ---
 
-## Stage 5 — Usability pass
+## Stage 5 — Usability pass and state inventory
 
 The wireframe exists. Now check whether it actually makes the task easier, before any styling.
 
@@ -214,9 +214,22 @@ Answer all ten. A "no" is a layout revision, not a note for later.
 - Auto-save versus explicit save, and how completion is acknowledged
 - Focus order against visual order; touch-target size on touch devices
 
+### State inventory
+
+Heuristics 3, 5, 6, 9 and 10 above all ask about states. Answer them **as a table**, not as prose — `interaction-and-states.md` carries the procedure, the candidate state list and the feedback-surface choice.
+
+```md
+| State | Trigger | User sees | User can do | Exit condition |
+|-------|---------|-----------|-------------|----------------|
+```
+
+This belongs here rather than at implementation time because states are structural: a stale banner, a partial-data line and an error with a retry all occupy space the wireframe has to reserve. A layout that only fits the success case gets rebuilt.
+
 ### Gate
 
 If the wireframe does not visibly make the primary task easier, revise the layout. Do not proceed to styling to compensate.
+
+No state may be left without a trigger, visible feedback and an exit.
 
 ---
 
@@ -514,6 +527,7 @@ Remaining risks
 - [ ] Flow and friction evaluated
 - [ ] Wireframe produced and approved before styling
 - [ ] Usability pass completed against the ten heuristics
+- [ ] State inventory tabulated, each state with a trigger, feedback, user action and exit
 - [ ] Density justified by data volume and behaviour
 - [ ] TODO list created, dependency-ordered, every item with an acceptance criterion
 - [ ] Items executed and validated one at a time
