@@ -1,5 +1,7 @@
 # Data-Entry Form
 
+> Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — field order follows the user's mental model established there, and fields that support no decision should already have been removed.
+
 ## Grouping and rhythm
 
 Split fields into semantic groups (`fieldset` + `legend`); spacing between groups is **at least twice** the spacing between fields. Uniform spacing turns a long form into an unreadable list.

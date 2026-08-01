@@ -1,5 +1,7 @@
 # Filter / Search / Query Panel
 
+> Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — it does not decide which criteria the user actually filters by, or whether the panel belongs on this screen.
+
 ## Applied filters are the single source of truth
 
 The user must see **at all times** what is applied. Applied filters are listed as chips that stay visible even when the panel is closed, and each chip can be removed on its own.

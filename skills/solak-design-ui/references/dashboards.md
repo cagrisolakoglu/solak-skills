@@ -1,5 +1,7 @@
 # Dashboard / Metric Summary
 
+> Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — the question each tile answers is decided there, not here.
+
 ## Every tile answers one question
 
 When adding a tile, write its question down: "How far behind target are we this month?" If the question cannot be written, remove the tile.

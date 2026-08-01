@@ -1,5 +1,7 @@
 # Typography
 
+> Apply these rules at Stage 6 of `ux-workflow.md`, once the layout and data volume are known. Type size and density are not the fix for a screen whose information has no priority order.
+
 In a data-dense surface, typography is not decoration but a **reading instrument**: the wrong figure set breaks column alignment, the wrong family slows scanning, the wrong weight destroys legibility. Number formatting and locale (separators, decimals) live in `formatting.md`; this file covers family, figures and weight.
 
 ## 1 · Use the existing system first
