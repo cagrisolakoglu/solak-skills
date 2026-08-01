@@ -381,6 +381,21 @@ Do not solve responsive layout by shrinking all text. Order: **change layout →
 
 **Do not `clamp()` dense table body text.** A data cell should stay stable across breakpoints; the layout adapts around it, not the other way round.
 
+### Text inside a scaled SVG ignores the minimum-size floor
+
+Axis labels, chart ticks and any `<text>` in an SVG scale with the `viewBox`, not with the type scale. A tick that measures 11px in a 1440px tile becomes ~5px in the same tile at 320px — the 12px floor is breached silently, and no CSS rule shows it because the declared `font-size` never changed.
+
+Moving the labels out of the SVG into an HTML row is not a free fix: they then align to the bar geometry only by coincidence, and any non-uniform scaling breaks the alignment.
+
+The workable answer is the one tables already use — give the chart a floor and let it scroll:
+
+```css
+.chart      { overflow-x: auto; }
+.chart svg  { min-inline-size: 420px; }   /* below this the ticks would fall under 12px */
+```
+
+Pick the floor from the narrowest width at which the smallest `<text>` still renders at 12px, and add the horizontal-scroll cue (`tables.md`). Verify it by screenshot at 320 — this is not visible in code review.
+
 ## 16 · Localisation
 
 Test with real locale content, not Lorem Ipsum.
