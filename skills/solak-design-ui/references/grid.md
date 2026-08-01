@@ -1,5 +1,7 @@
 # The Column Grid
 
+> This file is the column grid **inside a surface**: spans, cell sizing, row semantics. How the *page composition* rearranges as available width changes — region priorities, minimum usable widths, container queries, breakpoint selection — is `responsive-grid.md`. On a multi-region screen both are read.
+
 Density sets **vertical** rhythm, the grid sets **horizontal** rhythm. Missing either one makes a surface look scattered — even when every field is individually the right size.
 
 Symptom: each field's width is reasonable for its own content, but no field's left or right edge lines up with any other, and on a wide screen the right half of the surface is dead space. That is the signature of a form built from **content-width flex**.
