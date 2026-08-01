@@ -246,7 +246,16 @@ Do not start implementation until the density choice is justified by data volume
 
 ## Stage 7 — Implementation TODO
 
-Mandatory before writing code. Fill in `templates/design-todo.md`.
+Mandatory before writing code. The list always exists; where it lives depends on size.
+
+| Work items | Artefact |
+|-----------|----------|
+| **5 or more** | Fill in `templates/design-todo.md` — the run needs a place to record decisions and progress across many steps |
+| **Fewer than 5** | An inline list in the response is enough |
+
+The **discipline is identical** in both cases: dependency order, one verifiable result per item, an acceptance criterion on each, validate before moving on. Only the artefact changes. A short list is not permission to skip the criteria — it is permission to skip the file.
+
+Reworking one existing screen usually lands under the threshold; building a surface from scratch usually lands over it. Count the items before deciding, not after.
 
 ### Rules
 

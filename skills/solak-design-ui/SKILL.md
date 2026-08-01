@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, error and overflow states. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.4.2
+  version: 1.4.3
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: draft
@@ -61,7 +61,7 @@ Ten stages. The procedure, tables and templates live in `references/ux-workflow.
 5. **Rough layout** — `references/layout-and-information-architecture.md`: regions, reading order, action placement, progressive disclosure, master-detail, sticky context, narrow-screen order, and reserved space for every state. Produce an ASCII wireframe. *Gate: no styling before this exists.*
 6. **Usability pass** — Ten heuristics against the wireframe; interaction count, safe defaults, shortcuts, focus order, touch targets. *Gate: if the layout does not visibly make the task easier, revise it rather than styling around it.*
 7. **Density, typography and direction** — Now that volume and behaviour are known: `references/density-and-direction.md`, then `references/typography.md`. Typography is **role-based, tokenised and verified with real data**: use the existing product system first; with no system, Inter Variable is the default; measured numbers take tabular lining figures and right alignment, monospace is reserved for technical identifiers, and the font is not "chosen" until its delivery is verified. Choose the direction and **get it approved**; do not assume dark theme. *Gate: density justified in one sentence.*
-8. **Implementation TODO** — Fill in `templates/design-todo.md`. Dependency-ordered, file-level, one verifiable result and an acceptance criterion per item. *Gate: no code before the list exists.*
+8. **Implementation TODO** — Dependency-ordered, file-level, one verifiable result and an acceptance criterion per item. **Five or more work items → fill in `templates/design-todo.md`. Fewer than five → an inline list in the response is enough.** The discipline is identical either way; only the artefact changes. *Gate: no code before the list exists, in one form or the other.*
 9. **Execute step by step** — Per item: read the files, restate the acceptance criterion, make the smallest scoped change, run checks, validate, mark complete, record the decision. Structure before visuals; states and accessibility are not postponed.
 10. **Validate and report** — Run the gates below and produce the Output block.
 

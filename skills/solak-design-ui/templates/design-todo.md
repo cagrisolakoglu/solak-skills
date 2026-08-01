@@ -1,5 +1,10 @@
 # Design Implementation TODO
 
+> **Use this file when the work has five or more items.** Below that, an inline list
+> in the response is enough — the discipline is the same either way (dependency order,
+> one verifiable result per item, an acceptance criterion on each, validate before
+> moving on); only the artefact changes. See Stage 7 of `references/ux-workflow.md`.
+>
 > Copy this file into the working area for the surface being designed and fill it in.
 > Stages 0-6 of `references/ux-workflow.md` produce the Context, UX decisions and
 > Wireframe sections. Do not start Work items until those three are complete.
