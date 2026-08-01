@@ -152,6 +152,8 @@ Two rules specific to charts inside a tile:
 
 ## States
 
+> Tile-specific below. Freshness wording, refresh that preserves the current view, retry naming, background operations and the state inventory are in `interaction-and-states.md`.
+
 | State | Design |
 |-------|--------|
 | No data | Keep the tile structure; instead of a value, "no data" plus the reason |

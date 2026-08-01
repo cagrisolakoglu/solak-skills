@@ -1,6 +1,6 @@
 # Responsive Grid
 
-> Read this at Stage 5 of `ux-workflow.md`, right after the layout skeleton exists and before any styling. Regions and reading order come from `layout-and-information-architecture.md`; this file decides how that composition survives a change in available width.
+> Read this at the **rough layout** stage of `ux-workflow.md`, right after the layout skeleton exists and before any styling. Regions and reading order come from `layout-and-information-architecture.md`; this file decides how that composition survives a change in available width.
 
 Scope boundary with the other grid file: **`grid.md` is the column grid *inside* a surface** — spans, cell sizing, row semantics. **This file is the page composition** — how regions rearrange as space changes. They are read together on a multi-region screen.
 
@@ -189,6 +189,26 @@ The name should say **why the breakpoint exists**. `$bp-sidebar-stack: 64rem` su
 Every region declares one strategy: wrap · truncate with full-value access · horizontal scroll · vertical scroll · fold · move to detail · declare a supported minimum width.
 
 A horizontal scroll region must have a visible boundary, a continuation cue, keyboard access, no focus trap, and readable sticky content (`tables.md`).
+
+### `overflow: hidden` for a rounded corner cancels the strategy underneath it
+
+Wrapping a table in a bordered, rounded card and adding `overflow: hidden` so the corner clips cleanly is the standard move. It also **deletes the child's overflow strategy**, and it does so silently: valid CSS, no console output, no scrollbar, no visual seam. Measured on a real component bench — the container was 286px wide, the table 780px, and 494px of columns simply did not exist for the user.
+
+```css
+/* ❌ the corner clips; so does the data */
+.panel { border: 1px solid var(--warn); border-radius: var(--radius); overflow: hidden; }
+.panel table { min-inline-size: 26rem; }
+
+/* ✅ the radius moves to the scroll container, which is the element that clips anyway */
+.panel        { border: 1px solid var(--warn); border-radius: var(--radius); }
+.panel__scroll { overflow-x: auto; border-end-start-radius: var(--radius); border-end-end-radius: var(--radius); }
+```
+
+Whenever `overflow: hidden` appears on an ancestor, name the reason. If the reason is a corner, a shadow or a pseudo-element, the fix is to move the clip to the element that already scrolls. **A parent may not silently override a child's declared overflow strategy.** The check is one line at each supported width:
+
+```js
+el.scrollWidth > el.clientWidth && getComputedStyle(el).overflowX === 'hidden'   // → unreachable content
+```
 
 ## Navigation, drawers and dialogs
 
