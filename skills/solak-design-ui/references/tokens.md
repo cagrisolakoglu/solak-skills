@@ -67,16 +67,27 @@ The set below was verified by screenshot in both themes. Values are `oklch` beca
   --success: oklch(43% 0.11 155);  --success-quiet: oklch(96% 0.03 155);
   --warn:    oklch(48% 0.11 75);   --warn-quiet:    oklch(96% 0.04 75);
 
-  /* 6 · Typography — one family, hierarchy by weight and scale (`typography.md`) */
+  /* 6 · Typography — one family, ROLE-named steps, closed weight set (`typography.md`).
+     Names say what the step is FOR: `--text-caption` survives a redesign,
+     `--text-small` becomes a lie the first time the scale shifts. */
   --font-ui: "Inter Variable", "Inter var", Inter,
-             ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;  /* technical identifiers only */
-  --text-micro: 0.75rem;
-  --text-label: 0.8125rem;
-  --text-body:  0.875rem;
-  --text-title: clamp(1.25rem, 1.05rem + 0.9vw, 1.6rem);
-  --leading-body:  1.45;
-  --leading-label: 1.3;
+             ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;  /* technical identifiers only */
+
+  --text-caption:   0.75rem;    /* 12px — hints, metadata, column headers */
+  --text-data:      0.8125rem;  /* 13px — table cells, compact values */
+  --text-body:      0.875rem;   /* 14px — descriptions, help text */
+  --text-section:   1rem;       /* 16px — section headings */
+  --text-title:     1.25rem;    /* 20px — page title */
+  --text-metric-sm: 1.5rem;     /* 24px — KPI, small tile */
+  --text-metric-lg: 2rem;       /* 32px — KPI, primary tile */
+
+  --leading-tight:   1.2;
+  --leading-label:   1.3;
+  --leading-data:    1.35;
+  --leading-body:    1.45;
+  --leading-reading: 1.6;
+
   --weight-body:   400;  /* floor: never below 400 in a dense surface */
   --weight-label:  500;
   --weight-strong: 600;  /* the only emphasis step — a closed set, see typography.md */
@@ -106,11 +117,23 @@ Note what is **absent** on purpose: there is no shadow token. Static surfaces ar
 
 ## Density and theme are inherited in the same layer
 
+Density moves the **surface** type step, not the whole scale: the role tokens above stay fixed, and a surface-level pair selects which of them a table cell or field label uses.
+
 ```css
-[data-density="comfortable"] { --field-height: 44px; --field-pad-x: 14px; --text-body: 0.9375rem;
+:root {                        /* compact — the default */
+  --surface-text-size:   var(--text-body);      /* 14px */
+  --surface-label-size:  var(--text-caption);   /* 12px */
+  --surface-line-height: 1.4;
+}
+[data-density="comfortable"] { --field-height: 44px; --field-pad-x: 14px;
+                               --surface-text-size: 0.9375rem;          /* 15px */
+                               --surface-label-size: var(--text-data);  /* 13px */
+                               --surface-line-height: var(--leading-body);
                                --space-field: 20px; --space-group: 48px; --grid-gutter: 24px; }
-[data-density="dense"]       { --field-height: 28px; --field-pad-x: 8px;  --text-body: 0.8125rem;
-                               --text-label: 0.75rem; --leading-body: 1.35;
+[data-density="dense"]       { --field-height: 28px; --field-pad-x: 8px;
+                               --surface-text-size: var(--text-data);      /* 13px */
+                               --surface-label-size: var(--text-caption);  /* 12px */
+                               --surface-line-height: var(--leading-data);
                                --space-field: 12px; --space-group: 32px; --grid-gutter: 12px; }
 ```
 

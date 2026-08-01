@@ -4,6 +4,8 @@
 
 Decide density first: `density-and-direction.md`.
 
+Numeric alignment, figure sets and identifier treatment come from `typography.md`; this file adds the table-specific behaviour around them.
+
 ## Alignment by type
 
 | Data type | Alignment | Note |

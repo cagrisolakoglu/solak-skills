@@ -2,6 +2,8 @@
 
 > Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — field order follows the user's mental model established there, and fields that support no decision should already have been removed.
 
+Label, help-text, error, readonly and disabled type treatment comes from `typography.md`; this file adds the form behaviour around it.
+
 ## Grouping and rhythm
 
 Split fields into semantic groups (`fieldset` + `legend`); spacing between groups is **at least twice** the spacing between fields. Uniform spacing turns a long form into an unreadable list.
