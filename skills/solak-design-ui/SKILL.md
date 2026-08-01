@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, error and overflow states. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.4.1
+  version: 1.4.2
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: draft
@@ -21,8 +21,10 @@ Designs and builds the screens people work in — tables, filter panels, data-en
 - The states real data produces are missing: empty, loading, partial, error, overflow, too many results
 - A screen "feels wrong" and the cause is structural rather than cosmetic
 
+The scope is a **principle, not a list of surface types**: any screen someone works in to reach a result. Internal tools, admin consoles, audit and review surfaces, operator consoles and component benches all qualify even though none of them is "a table" or "a dashboard". The test is: can a primary task be written in one sentence, and does a wrong reading cost something? Then the workflow applies.
+
 Do **not** use this skill for:
-- Marketing pages, landing pages, brand surfaces — out of scope
+- Marketing pages, landing pages, brand surfaces — persuasion, not task completion
 - Building a product-wide design system from zero — larger, separate work
 - Problems that are behavioural rather than design (data flow, state bugs) — fix the code directly
 
