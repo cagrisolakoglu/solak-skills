@@ -1,5 +1,7 @@
 # Density and Direction
 
+> Decide density and direction only after the layout skeleton exists: both depend on data volume and usage behaviour, which come out of `ux-workflow.md` Stages 2-4.
+
 In data-dense UI the **density decision matters more than the style direction.** The same table is a different product at `comfortable` than at `dense`. Make this call first.
 
 ## The density scale

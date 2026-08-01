@@ -1,5 +1,7 @@
 # Table / Data Grid
 
+> Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — it does not decide which columns the screen needs, or whether a table is the right surface at all.
+
 Decide density first: `density-and-direction.md`.
 
 ## Alignment by type
