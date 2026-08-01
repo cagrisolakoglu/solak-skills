@@ -116,36 +116,49 @@ This skill is **self-contained**: UX workflow, layout, quality criteria, token l
 
 ## Output
 
-Full template in `references/ux-workflow.md`. Shape:
+Full template in `references/ux-workflow.md`.
 
 ```
-User          Operations specialist · Find anomalous usage records and start
-              investigating them · done when every anomaly is dismissed or assigned
+User
+  Role: Operations specialist
+  Primary task: Find anomalous usage records and start investigating them
+  Success criterion: Every anomaly in the period is dismissed or assigned
 
-UX decision   Flow: enter → narrow by period → scan deviation → open → act → verify
-              Removed friction:
-                - Filter change no longer empties the table (stale result stays, announced)
-                - Deviation promoted from detail column to decision column
-                - Record detail moved from modal to side panel; filters survive
+UX decision
+  Main flow: enter → narrow by period → scan deviation → open record → act → verify
+  Removed friction:
+    - Filter change no longer empties the table (previous result stays, staleness announced)
+    - Deviation promoted from a detail column to the decision column
+    - Record detail moved from a modal to a side panel; filters survive
 
-Layout        1. context+export  2. query+applied filters  3. anomaly line
-              4. dense table  5. selection+bulk
-              Narrow: rows fold to cards below 560px — identity block measured at
-              52% of a 320px viewport, so horizontal scroll was rejected
+Layout
+  Main regions: 1. context + export   2. query + applied filters   3. anomaly line
+                4. dense table        5. selection + bulk
+  Narrow-screen strategy: rows fold to cards below 560px — the identity block
+  measured 52% of a 320px viewport, so horizontal scroll was rejected
 
-Visual        dense (28px) — 400+ records, scanning, desktop · Swiss/International
-              Existing product type system · numbers tabular+lining, right-aligned
+Visual system
+  Density: dense (28px rows) — 400+ records, operator scanning, desktop primary
+  Direction: Swiss/International · Typography: existing product system
+  Numbers: tabular + lining, right-aligned
 
-TODO          ✅ 14 done · ⚠️ 2 validations pending · ❌ 0 blocking gaps
+TODO summary
+  ✅ 14 completed · ⚠️ 2 validations pending · ❌ 0 blocking gaps
 
-Files         + src/styles/tokens.css   ~ src/components/UsageTable.*
+Changed files
+  + src/styles/tokens.css
+  ~ src/components/UsageTable.*
+  ~ src/components/FilterPanel.*
 
-Validation    ✅ contrast 7.1:1 · keyboard + focus-visible · tabular figures
-              ✅ empty/loading/no-results/error · 320px fold verified by screenshot
-              ⚠️ reduced-motion added, not tried on a real device
-              ⚠️ dark theme tokens exist, not verified by eye
+Validation
+  ✅ contrast 7.1:1 · ✅ keyboard + focus-visible · ✅ tabular + lining figures
+  ✅ empty/loading/no-results/error · ✅ 320px fold verified by screenshot
+  ⚠️ reduced-motion added, not tried on a real device
+  ⚠️ dark theme tokens exist, not verified by eye
 
-Risks         Virtualisation untested above ~2,000 rows · no real user test
+Remaining risks
+  - Virtualisation untested above ~2,000 rows
+  - No real user test performed
 ```
 
 ## Guardrails

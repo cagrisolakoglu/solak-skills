@@ -23,7 +23,15 @@ skills/solak-<eylem>-<hedef>/
     └── gövde         # When to Use, Inputs, Workflow, Output, Guardrails, Examples
 ```
 
-Ek dosyalar (`references/`, `scripts/`, `assets/`) yalnızca gerçekten gerekliyse eklenir. Varsayılan tek dosyadır.
+Ek dosyalar (`references/`, `templates/`, `scripts/`, `assets/`) yalnızca gerçekten gerekliyse eklenir. Varsayılan tek dosyadır.
+
+| Klasör | İçerik | Ne zaman |
+|--------|--------|----------|
+| `references/` | Yürütme sırasında **okunacak** kural ve karar içeriği | SKILL.md'yi şişirecek kadar uzun bilgi varsa |
+| `templates/` | Kullanıcının veya ajanın **dolduracağı** iskelet dosya | Skill tekrarlanan bir çıktı üretiyorsa (plan, TODO, rapor) |
+| `scripts/` | Çalıştırılabilir yardımcı | Elle tekrarlanan bir komut dizisi varsa |
+
+Referans dosyaları **koşullu okunur**: SKILL.md hangi durumda hangisinin okunacağını söyler. Hepsini her seferinde okutan bir skill, tek dosyalı bir skill'den daha pahalıdır ve daha az işe yarar.
 
 ## Frontmatter
 
@@ -67,7 +75,15 @@ metadata:
 1. **Doğrulama adımı zorunlu.** Her workflow bir "nasıl kanıtlanır" adımıyla bitmeli — komut, test, kontrol listesi. Doğrulanamayan skill güvenilmez.
 2. **Belirsizlikte sor, tahmin etme.** Ama sormaya bağlı olmayan işi önce bitir.
 3. **Yıkıcı eylemler onay ister.** Dosya silme, force push, canlı ortama dokunma.
-4. **Kısa tut.** 150 satırı aşan SKILL.md genelde iki skill'dir. Uzun referans içeriğini `references/` altına ayır.
+4. **Ölçüt uzunluk değil, içeriğin doğru dosyada olması.** SKILL.md ne kadar gerekiyorsa o kadar uzun olur — satır sayısı için sabit bir tavan yok.
+
+   SKILL.md'de kalması gerekenler: akışı yöneten her şey. Aşama başlıkları, kapılar, girdi sözleşmesi, guardrail'ler, çıktı formatı. Bunlar kısaltılırsa skill akışını kaybeder.
+
+   `references/` altına taşınması gerekenler: yürütme sırasında **koşullu** okunacak bilgi. Tablolar, checklist gövdeleri, karar matrisleri, tuzak anlatımları, şablonlar. Bunlar SKILL.md'de dururken her çağrıda okunur ve çoğu zaman gereksizdir.
+
+   Uzunluk yalnızca bir **soru işareti**dir, kural değil: SKILL.md beklenenden uzunsa iki şeyi kontrol et — (a) içinde koşullu okunacak bilgi kalmış olabilir, referansa taşı; (b) gerçekten iki ayrı iş anlatıyor olabilir, o zaman skill ikiye bölünür. İkisi de değilse uzunluk sorun değildir.
+
+   Örnek: `solak-design-ui` on aşamalı UX akışına geçtiğinde SKILL.md büyüdü. Aşamaları kısaltmak akışı bozardı; doğru hamle tabloları ve şablonları `ux-workflow.md` ile `layout-and-information-architecture.md`'ye almaktı. (Bu maddenin eski hali 150 satırlık sabit bir tavandı ve tam da yanlış tarafı sıkıştırmaya zorluyordu.)
 5. **Yer tutucu bırakma.** `<...>` kalmış bir skill draft bile sayılmaz.
 6. **Bölüm başlıklarını değiştirme.** `## When to Use` gibi başlıklar araçlar tarafından ayrıştırılabilir; çevirmek veya yeniden adlandırmak eşleşmeyi bozar.
 
