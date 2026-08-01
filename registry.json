@@ -17,7 +17,7 @@
     {
       "name": "solak-design-ui",
       "path": "skills/solak-design-ui",
-      "version": "1.4.3",
+      "version": "1.4.4",
       "status": "draft",
       "tags": ["design", "ux", "frontend", "ui", "data-dense", "tables", "forms", "dashboards", "self-contained"],
       "description": "Designs and implements UX-first, data-dense enterprise interfaces. Starts from the user's primary task, information hierarchy, task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last. Covers tables, filter panels, data-entry forms, report screens and metric dashboards with all the states real data produces. Self-contained: carries its own UX workflow, layout, design-quality, token, typography, formatting and chart rules with no dependency on other skills or external rule files."

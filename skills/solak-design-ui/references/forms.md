@@ -105,6 +105,7 @@ Note the cell carrying help or error text needs its own measure (≥ ~34ch) even
 - The primary action (Save) is emphasised and **singular**
 - Secondary (Cancel) is low-emphasis; beside the primary but far enough not to be hit by accident
 - **The destructive action (Delete) lives elsewhere**, not next to the primary; it asks for confirmation
+- **Its weight flips in the confirmation dialog.** In the form's action row Delete is quiet and distant, because the primary action there is Save. In the dialog that follows, the destructive action **is** the primary action — the user came there to confirm it — so it takes solid weight in the danger colour. Left low-emphasis there, "Cancel" becomes the visually stronger button and the screen pushes the user away from what they asked for
 - In a long form the save action may be sticky; then an unsaved-changes indicator must exist too
 - During submission, disable the button and show the state — prevent double submission
 
