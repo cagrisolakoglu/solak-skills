@@ -2,7 +2,13 @@
 
 > Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — it does not decide which criteria the user actually filters by, or whether the panel belongs on this screen.
 
-Chip values, result counts and pending-state type treatment come from `typography.md`.
+## Read with
+
+- `interaction-and-states.md` — pending, refresh, retry, the state inventory
+- `typography.md` — chip values, result counts, pending-state type treatment
+- `responsive-grid.md` — the chip wall, the drawer threshold, narrow-width composition
+- `tables.md` — when the result surface is a table
+- `formatting.md` — value formatting inside chips and range inputs
 
 ## Applied filters are the single source of truth
 

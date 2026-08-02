@@ -96,6 +96,16 @@ Bu repoyu bir ajan kuruyorsa: **junction dene → hata alırsan symlink dene →
 
 Güncel ve makine-okunur liste: [`registry.json`](registry.json)
 
+### Doğrulama
+
+`solak-design-ui` yapısal olarak doğrulanabilir — kırık referans, eksik dosya, geçersiz semver, boş dosya ve emekli dosya adları hata verir. Yalnızca standart kütüphane; kurulum adımı yok.
+
+```bash
+python skills/solak-design-ui/scripts/validate_skill.py
+```
+
+Aynı komut skill'e dokunan her PR ve push'ta [CI'da](.github/workflows/validate-solak-design-ui.yml) koşar. Dosya listesinin kaynağı [`manifest.yaml`](skills/solak-design-ui/manifest.yaml); değerlendirmeler [`evals/`](skills/solak-design-ui/evals/), örnekler [`examples/`](skills/solak-design-ui/examples/) altında.
+
 ## İsimlendirme
 
 Tüm skill'ler `solak-` prefix'i ve `solak-<eylem>-<hedef>` formatını kullanır (örn. `solak-review-pr`).

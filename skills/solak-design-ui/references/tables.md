@@ -2,7 +2,14 @@
 
 > Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — it does not decide which columns the screen needs, or whether a table is the right surface at all.
 
-Decide density first: `density-and-direction.md`.
+## Read with
+
+- `density-and-direction.md` — **first**: row height and separator system before anything here
+- `typography.md` — figures, identifiers, header type treatment, the minimum sizes
+- `formatting.md` — decimals, units, dates, currency, missing values
+- `responsive-grid.md` — the fold, minimum usable width, overflow strategy
+- `interaction-and-states.md` — refresh, partial data, selection scope, retry
+- `grid.md` — only when the table sits in a multi-column composition
 
 Numeric alignment, figure sets and identifier treatment come from `typography.md`; this file adds the table-specific behaviour around them.
 

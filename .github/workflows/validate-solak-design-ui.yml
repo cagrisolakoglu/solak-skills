@@ -1,0 +1,24 @@
+name: Validate solak-design-ui
+
+# Only runs when the skill changes. The repository has no other CI, so this
+# workflow is deliberately narrow: adding a second skill should add its own
+# job rather than widening this one into a repo-wide gate.
+on:
+  pull_request:
+    paths:
+      - "skills/solak-design-ui/**"
+  push:
+    paths:
+      - "skills/solak-design-ui/**"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Standard library only — no install step, no lockfile, no cache.
+      - run: python skills/solak-design-ui/scripts/validate_skill.py

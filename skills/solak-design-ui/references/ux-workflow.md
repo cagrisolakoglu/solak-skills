@@ -18,6 +18,10 @@ Shortcut allowance: when fixing a small, obvious defect in an existing component
 
 ## Stage 0 — Scope and the existing system
 
+**First, classify the scope** — micro fix, component refinement, screen redesign, or product-wide system (the table in `SKILL.md`). This file is the redesign process. A refinement runs Stages 1, 2, 5, 7 and 8 scoped to the component. A micro fix runs none of it: inspect, fix, verify, report. Running the full process on a small defect is not diligence, and skipping it on a redesign is not speed.
+
+The redesign path fills in the **surface contract** — user, task, decision, volume, freshness, costly mistake, device, minimum width, loading/empty/error behaviour, accessibility risks, out-of-scope areas. It is one line per field, produced by Stages 0-2 and 5, and it lives at the top of `templates/design-todo.md`. Infer from the repository; write `Unknown` only when a material fact genuinely cannot be inferred, and say what it would change.
+
 ### Tasks
 
 - [ ] Identify the target screen or component

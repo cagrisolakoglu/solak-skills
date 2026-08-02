@@ -2,7 +2,13 @@
 
 > Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — the question each tile answers is decided there, not here.
 
-KPI value, comparison and context type treatment comes from `typography.md`.
+## Read with
+
+- `formatting.md` — metric values, units, deltas, missing data, rounding
+- `typography.md` — KPI value, comparison and context type treatment
+- `responsive-grid.md` — bento composition, tile minimum widths, reading order when it stacks
+- `interaction-and-states.md` — freshness, tile-level errors, partial data, background refresh
+- `design-quality.md` — chart type, palette limits, axes, tooltips
 
 ## Every tile answers one question
 

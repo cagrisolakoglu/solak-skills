@@ -2,7 +2,13 @@
 
 > Before applying these rules, complete the user-task, information-priority and layout stages in `ux-workflow.md`. This reference refines an approved layout — field order follows the user's mental model established there, and fields that support no decision should already have been removed.
 
-Label, help-text, error, readonly and disabled type treatment comes from `typography.md`; this file adds the form behaviour around it.
+## Read with
+
+- `interaction-and-states.md` — submitting, unsaved, server validation, conflict, offline
+- `typography.md` — label, help-text, error, readonly and disabled type treatment
+- `grid.md` — field spans and shared column lines across a multi-column form
+- `formatting.md` — numeric input, units, dates, locale
+- `responsive-grid.md` — when the form collapses to one column, and why there
 
 ## Grouping and rhythm
 
@@ -157,3 +163,17 @@ The skeleton's width should also match the expected value — a full-width skele
 - Groups via `fieldset`/`legend`
 - Fillable from start to end by keyboard; focus order matches visual order
 - Autofocus only on a screen whose single job is the form; otherwise it tears a screen-reader user out of context
+
+## Verification
+
+- [ ] Field order follows the user's mental model, not the database column order
+- [ ] Field width signals expected content; no full-width input for a two-digit number
+- [ ] Every field starts on a shared grid line (`grid.md`)
+- [ ] Validation fires on blur and on submit, never on every keystroke
+- [ ] Error messages say what to do, sit with the field, and survive a failed submit with the input intact
+- [ ] `readonly` and `disabled` are distinguishable from each other **and in dark theme**
+- [ ] A disabled control's reason is available; permission is not disguised as disabled (`interaction-and-states.md`)
+- [ ] The primary action is distinct; destructive actions are separated and state their scope
+- [ ] Save state is visible — auto-save exposes saving / saved / failed / offline
+- [ ] Completable start to finish by keyboard; focus order matches visual order
+- [ ] Labels, help text and errors carry their type roles from `typography.md`

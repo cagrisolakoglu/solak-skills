@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, stale, error, conflict and overflow states, and the feedback, retry, undo and confirmation behaviour around them. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, responsive, interaction-state, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.6.0
+  version: 1.7.0
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: draft
@@ -30,6 +30,27 @@ Do **not** use this skill for:
 
 Charts inside dashboards **are** in scope: type, palette limits, axes and tooltips are in `references/design-quality.md`.
 
+## Scope triage
+
+Classify the request **before** anything else. The wrong process is a real failure: a ten-stage workflow on a missing focus ring wastes the user's time, and an inline fix on a screen redesign skips the gates that make it safe.
+
+| Scope | Typical request | Process |
+|-------|-----------------|---------|
+| **Micro fix** | One alignment, focus ring, overflow or spacing defect | inspect → fix → verify |
+| **Component refinement** | One table, filter panel, form group or metric area | local task check → local layout and state review → short TODO → implement |
+| **Screen redesign** | A whole page, or the workflow itself changed | the full ten-stage workflow |
+| **Product-wide system** | A design system across every product surface | out of scope — constrain to one representative surface, or route to a separate project |
+
+**Micro fix** — *"The amount column is left-aligned." "The focus ring is missing." "The sticky header overlaps one column."*
+Inspect the component, load only the reference that owns the rule, make the smallest change, verify that one thing. **No wireframe, no product-strategy questions, no stage list.** State what you changed and how you checked it.
+
+**Component refinement** — *"This table is too busy." "This filter panel is hard to use."*
+Name the local task, review information priority, states and narrow-width behaviour for that component, write a short TODO, stay inside the component and its immediate context. Do not redesign the page around it.
+
+**Screen redesign** — the full workflow below: surface contract, wireframe, responsive failure record, state inventory, TODO, complete validation.
+
+Scope is set by the **work required**, not by the wording of the request. "Just fix the table" on a screen whose information priority is wrong is a refinement, not a micro fix — say so and say why before proceeding.
+
 ## Inputs
 
 | Input | Required | Notes |
@@ -46,13 +67,17 @@ Charts inside dashboards **are** in scope: type, palette limits, axes and toolti
 | technology | ❌ | Detect from the repo; if undetectable, ask. |
 | constraints | ❌ | Existing tokens or palette, accessibility target, performance budget. |
 
+**Required means required for a screen redesign.** A micro fix needs none of them, and a component refinement needs only the primary task and the data volume. Do not interrogate someone who asked for a focus ring.
+
 Infer what you can from the repository. If something is still unknown **and materially changes the design**, ask once — all questions in one message.
 
 "Clean", "minimal", "modern" and "nice" are **not directions** — convert them into something concrete and get approval.
 
 ## Workflow
 
-Ten stages. The procedure, tables and templates live in `references/ux-workflow.md`; read it at Stage 0 and work through it.
+**This is the screen-redesign process.** A component refinement runs stages 2, 3, 6, 8 and 9 scoped to the component; a micro fix runs none of it. The procedure, tables and templates live in `references/ux-workflow.md`; read it at Stage 0 and work through it.
+
+Stage 1 of a redesign also produces the **surface contract** — the one-screen statement of user, task, volume, freshness, minimum width, state behaviour and what is out of scope. Template in `templates/design-todo.md`.
 
 1. **Scope and existing system** — Target surface, framework, existing tokens and typography, comparable screens, supported widths, and explicitly what must **not** change.
 2. **User, task and decision** — Primary user, why they come, the one-sentence primary task, the decision they make, most frequent action, costliest mistake. *Gate: if the primary task needs more than one sentence, the scope is two screens.*
@@ -67,27 +92,59 @@ Ten stages. The procedure, tables and templates live in `references/ux-workflow.
 9. **Execute step by step** — Per item: read the files, restate the acceptance criterion, make the smallest scoped change, run checks, validate, mark complete, record the decision. Structure before visuals; states and accessibility are not postponed.
 10. **Validate and report** — Run the gates below and produce the Output block.
 
-Read **only the reference that applies** to the surface, and only at Stage 9:
+## Reference routing
 
-- Table / data grid → `references/tables.md`
-- Filter / search / query panel → `references/filters.md`
-- Data-entry form → `references/forms.md`
-- Dashboard / metric summary → `references/dashboards.md`
+**Read the smallest reference set that can safely complete the task.** Every reference is a real cost; loading all fourteen for a one-line fix is not thoroughness, it is noise. The machine-readable form of this table is `manifest.yaml`.
 
-Cross-cutting, independent of surface:
+| Situation | Read |
+|-----------|------|
+| Micro alignment, focus or spacing defect | the surface reference that owns the rule — nothing else |
+| Numeric formatting defect | `formatting.md` + `typography.md` |
+| Responsive or overflow defect | `responsive-grid.md` + the affected surface |
+| Token inconsistency | `tokens.md` + the affected surface |
+| Misaligned columns inside one surface | `grid.md` + the affected surface |
+| Table / data grid | `tables.md` + `formatting.md` + `typography.md` |
+| Filter / search / query panel | `filters.md` + `interaction-and-states.md` |
+| Data-entry form | `forms.md` + `interaction-and-states.md` |
+| Dashboard / metric summary | `dashboards.md` + `formatting.md` |
+| Full screen redesign | `ux-workflow.md` + `layout-and-information-architecture.md` + `responsive-grid.md` + `interaction-and-states.md` + `design-quality.md`, plus the surface row above |
 
-- `references/design-quality.md` — always: quality criteria, restraint rules, patterns to avoid, chart decisions
-- `references/grid.md` — any multi-field or multi-column surface: the column grid **inside** a surface
-- `references/responsive-grid.md` — any multi-region page: how the **composition** changes with available width, breakpoint derivation, container queries
-- `references/interaction-and-states.md` — at Stage 6, and again at Stage 9: the state inventory, feedback-surface choice, loading kinds, error and retry, stale and partial, conflict, undo vs confirmation, offline, background work
-- `references/formatting.md` — wherever numbers, dates, units or money appear
-- `references/tokens.md` — when there is no token layer, or an existing one must be read
+- Read `ux-workflow.md` only for a refinement or a redesign — never for a micro fix.
+- Read `design-quality.md` for redesigns and broad refinements, not for every change.
+- Read **one** surface reference unless the work genuinely spans two surfaces.
+- Follow a cross-link when you need the rule; do not copy the rule between references.
+- Facts already established earlier in the task are not re-derived.
+
+Each surface reference opens with a **Read with** list — the cross-cutting files that surface actually needs.
+
+### Canonical ownership
+
+One rule, one home. Everywhere else links to it. When two files seem to disagree, the owner wins and the other file is wrong.
+
+| Rule | Owner |
+|------|-------|
+| Numeric figures, type roles, minimum sizes | `typography.md` |
+| Decimals, units, dates, currency, missing values | `formatting.md` |
+| Breakpoint derivation, minimum widths, overflow strategy | `responsive-grid.md` |
+| The column grid inside one surface | `grid.md` |
+| Loading, error, retry, stale, partial, conflict, offline, undo | `interaction-and-states.md` |
+| Column behaviour, alignment, sticky, totals | `tables.md` |
+| Applied-filter visibility, staleness presentation | `filters.md` |
+| Validation timing, `readonly` vs `disabled`, save state | `forms.md` |
+| Tile questions, metric context, freshness | `dashboards.md` |
+| Visual restraint, patterns to avoid, chart decisions | `design-quality.md` |
+| Row height, separator system, visual direction | `density-and-direction.md` |
+| The token layer itself | `tokens.md` |
+| Region priority, reading order, progressive disclosure | `layout-and-information-architecture.md` |
+| Stage order, gates, output format | `ux-workflow.md` |
 
 **Take screenshots at 320/768/1440 in both themes.** Some breakages appear only in the image while the CSS stays valid and silent. On a scrollable surface, capture it **while scrolled** — sticky failures show up nowhere else.
 
 This skill is **self-contained**: UX workflow, layout, quality criteria, token layer, typography, formatting and chart rules all live under `references/`. It depends on no external rule file and no other skill.
 
 ## Verification gates
+
+Gates are scoped like the workflow. A **micro fix** answers only the gates its own change touches — the alignment gate for an alignment fix, the focus gate for a focus fix — plus "nothing else regressed". A **component refinement** answers every gate that applies to the component. A **screen redesign** answers all of them. Claiming a gate you did not check is worse than reporting it unchecked.
 
 **Blocking** — if one fails the work is **not done**; state plainly what is missing:
 
