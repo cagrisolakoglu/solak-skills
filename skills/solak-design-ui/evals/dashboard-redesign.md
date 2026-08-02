@@ -43,17 +43,19 @@ The failure mode here is a competent-looking dashboard that answers no question.
 
 Asking clarifying questions is correct here and is **not** a scope failure, provided they arrive in one message and each one changes the design.
 
-## Result
+## Result — 2026-08-02, v1.7.0, clean context
 
-**NOT RUN.** Written 2026-08-02 alongside v1.7.0; no clean-context execution yet.
+Built from nothing: no file, no framework, no approved layout.
 
-A run performed in the session that authored the expectations is not evidence — the routing decision would be recalled rather than reached. This one needs a fresh session with the skill installed and no prior conversation about the surface.
+- **Scope classification:** screen redesign, full workflow. Ruled out the other three classes explicitly.
+- **Routing:** the dashboard row plus the full-redesign row, then `typography.md`, `tokens.md` and `density-and-direction.md` as Stage 7 calls for them, and `tables.md` because the surface genuinely spans a metric block **and** a dense grid. Skipped `filters.md`, `forms.md`, `grid.md`.
+- **References loaded:** 13 of 14 — the widest of the five runs, but a from-scratch redesign is the one scope where that is the prescribed set.
+- **Expected behaviours met:** all eleven. Treated "modern" as not a direction and chose Swiss/International restraint with a stated reason; asked its seven questions in one grouped table with an assumption for each; named one primary decision in one sentence — *"decide which generating assets need action now to keep the portfolio on its committed dispatch schedule"*.
+- **Forbidden behaviours observed:** none. Verified independently: no page overflow and zero console or page errors at eight widths from 320 to 1920; deviation cells **and** their header both `right` with `lining-nums tabular-nums`, all sharing one edge at x=999; six `—` cells for absent telemetry with the totals scoped *"14 of 16 assets reporting"*; one `aria-live` region; five tiles, not nine; a `Telemetry feeds` tile answering "can I trust the numbers above"; the context line stating the price is *delayed 5 min* rather than calling it live.
+- **Blocking failures:** none.
+- **Result: PASS**
+- **Notes:** Eleven defects were found by its own measurement and screenshot passes during the build and fixed before reporting, including a metric grid querying itself (stuck at four columns at every width), an `auto` track letting tile content escape onto the next tile (sideways scroll at 6 of 13 widths), an unsized `<svg>` rendering as a 200px black triangle, and `hidden` losing to `display: flex` so the selection bar announced a row count during loading. That last one is the third independent appearance of the `hidden`-vs-`display` collision across these runs.
 
-- Scope classification:
-- Routing:
-- References loaded:
-- Expected behaviours met:
-- Forbidden behaviours observed:
-- Blocking failures:
-- Result: PASS / PARTIAL / FAIL / NOT RUN
-- Notes:
+  **This run produced a new rule.** It reported that `document.fonts.check()` returned `true` while canvas metrics proved Inter was not loaded. Verified here directly: `document.fonts.check('16px Inter')` is `true`, `document.fonts.check('16px "Totally Not A Real Font"')` is **also** `true`, `[...document.fonts].length` is `0`, and both families measure an identical 31.1015625px. The obvious programmatic verification of the font-delivery gate does not verify anything. Encoded in `typography.md` §3 with the width-comparison test that does work.
+
+  Declared honestly rather than faked: conflict handling out of scope (single writer, no server), offline not implemented, retry buttons report failure instead of pretending a source recovered, and Inter self-hosting impossible in an offline single file — so the fallback is measured and reported rather than claimed.

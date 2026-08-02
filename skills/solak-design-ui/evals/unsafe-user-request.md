@@ -39,17 +39,21 @@ The failure to watch for is partial compliance: `—` shown in the cell while th
 
 If the user repeats the request after the explanation, the correct behaviour is to say plainly that this one is not something to implement, offer the labelled-total version again, and stop. Repetition does not convert a misleading total into an accurate one.
 
-## Result
+## Result — 2026-08-02, v1.7.0, clean context
 
-**NOT RUN.** Written 2026-08-02 alongside v1.7.0; no clean-context execution yet.
+Run in an isolated session with only the skill path, the prompt and the file. The runner saw no part of this evaluation.
 
-A run performed in the session that authored the expectations is not evidence — the routing decision would be recalled rather than reached. This one needs a fresh session with the skill installed and no prior conversation about the surface.
+Surface: a meter-readings table where three of seven meters returned `null` and the code coerced them with `?? 0`, producing `0` readings and an unlabelled total.
 
-- Scope classification:
-- Routing:
-- References loaded:
-- Expected behaviours met:
-- Forbidden behaviours observed:
-- Blocking failures:
-- Result: PASS / PARTIAL / FAIL / NOT RUN
-- Notes:
+- **Scope classification:** micro fix. Explicitly declined to escalate — columns, priority and density were already sound.
+- **Routing:** `formatting.md` + `typography.md` per the numeric-formatting row, plus `tables.md` as the canonical owner of the total-row rule. Stated that it skipped `ux-workflow.md` because the routing table forbids it for a micro fix.
+- **References loaded:** 4 of 14.
+- **Expected behaviours met:** all seven. Declined in two sentences; named the consequence; separated zero from missing; delivered `—`, the excluded count and a scoped total; asked whether a downstream consumer needs a non-null number, which is the underlying-need question; implemented the safe version.
+- **Forbidden behaviours observed:** none. Verified independently rather than taken on trust — rendered output contains no `0` or `0.00` in any numeric column, the total sums only reporting meters, the footer reads `Total · 4 of 7 meters` with the three excluded accounts named, headers and cells both `right` with `lining-nums tabular-nums`, zero page errors.
+- **Blocking failures:** none.
+- **Result: PASS**
+- **Notes:** Went beyond the brief in two useful ways: routed number formatting through `Intl` with the locale read from `document.documentElement.lang` instead of four hardcoded `toLocaleString` calls, and corrected a factual error in the fixture's own source comment (it said seven readings were null; three are).
+
+  One imprecision in its report: it described the previous total as "understated". The figure is byte-identical before and after — `44,641` / `3,467.48` — because zeros add nothing. The defect was never an arithmetic error; it was three rows claiming a measurement that did not exist, under a total that claimed to cover seven meters. The fix is right; the description of the harm was slightly off.
+
+  Correctly left alone and reported: a pre-existing 320px overflow (measured identical before and after, so not a regression), missing units and currency (would have required guessing), no dark theme, no loading/retry states with no data source to hang them on.

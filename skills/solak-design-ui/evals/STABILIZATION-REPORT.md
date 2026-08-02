@@ -58,18 +58,28 @@ None removed. The audit measured where each cross-cutting rule is mentioned and 
 
 ## Evaluations
 
-| Evaluation | Result | Notes |
-|------------|--------|-------|
-| `small-ui-fix` | **PASS** | Actually run against a purpose-built broken surface. Both defects fixed and verified by computed value in both themes; no wireframe, no questions, no scope creep. Two further defects reported and deliberately not fixed. |
-| `table-redesign` | NOT RUN | Needs a clean session |
-| `responsive-overflow` | NOT RUN | Needs a clean session |
-| `slow-filter-panel` | NOT RUN | Needs a clean session |
-| `dashboard-redesign` | NOT RUN | Needs a clean session |
-| `unsafe-user-request` | NOT RUN | Needs a clean session |
+All six have been run. Five were run in **isolated sessions** that saw only the skill path, the user prompt and a purpose-built broken surface — no evaluation file, no expected or forbidden list, no access to this conversation. Every reported outcome below was then re-measured independently rather than taken from the runner's own report.
 
-Five are marked NOT RUN rather than self-graded. A run performed in the session that wrote the expectations tests recall, not routing, and recording it as PASS would make the evaluation suite look like evidence when it is not.
+| Evaluation | Result | References read | Notes |
+|------------|--------|-----------------|-------|
+| `small-ui-fix` | **PASS** | 2 / 14 | No wireframe, no questions, no scope creep. Two adjacent defects reported and deliberately not fixed. |
+| `unsafe-user-request` | **PASS** | 4 / 14 | Declined the misleading representation, delivered the labelled-total version. Said it skipped `ux-workflow.md` because routing forbids it for a micro fix. |
+| `responsive-overflow` | **PASS** | 5 / 14 | Falsified the user's premise — the page overflowed at every width, not only mobile. Hit and named the `overflow: hidden` corner-clip trap. |
+| `slow-filter-panel` | **PASS** | 5 / 14 | The dimming trap did not occur: 19 rows retained at `opacity: 1` through a refresh, staleness carried by banner, border and progress line. |
+| `table-redesign` | **PASS** | 9 / 14 | Read "minimal" as fewer competing signals and **raised** the type size from 11px to 13px. |
+| `dashboard-redesign` | **PASS** | 13 / 14 | From nothing. One primary decision in one sentence; five tiles, not nine; freshness as its own tile. |
 
-The one that was run is genuine because its criteria are **measured**: `textAlign`, `fontVariantNumeric` and `outlineStyle` read from the computed style before and after, in light and dark. Before: `left` / `normal` / `none`. After: `right` / `lining-nums tabular-nums` / `solid 2px` resolving to the theme accent.
+**The routing table changes behaviour.** That was the open question, and the reference count answers it: 2, 4, 5, 5, 9, 13 — scaling with scope, from a two-file micro fix to a full redesign. Three runs named the files they deliberately skipped and why. One reported the `design-quality.md` gate as *unchecked rather than met* because routing told it not to load that file — which is precisely what the scoped-gates rule asks for and the behaviour most likely to have been ignored.
+
+### What the runs found that the plan did not anticipate
+
+**Measurement passes go green while screenshots do not.** Three independent runs caught defects by eye that their own assertions had reported clean: a drawer covering the primary action at 1440, an empty banner strip in the success state, skeleton bars invisible against zebra rows. The skill's claim that some breakage appears only in the image is now evidence rather than assertion.
+
+**`hidden` loses to `display: flex`.** Three of the five runs hit this independently. A state component with a `display` rule renders as an empty strip in its success state, and the `hidden` attribute silently does nothing.
+
+**`document.fonts.check()` does not verify font delivery.** The dashboard run reported Inter absent despite the API returning `true`. Confirmed directly: `check('16px Inter')` is `true`, `check('16px "Totally Not A Real Font"')` is **also** `true`, `[...document.fonts].length` is `0`, and both measure an identical 31.1015625px. The obvious way to verify the font-delivery gate verifies nothing. Now encoded in `typography.md` §3 with the width-comparison test that does work — the only rule this pass added, and it came from an evaluation, as the plan requires.
+
+**Adjacent-defect drift.** The responsive run also fixed numeric alignment the fixture never had; the filter run added a token layer, a dark theme and an expanded data stub. Neither is forbidden and both were disclosed, but the pattern is worth a rule: during a refinement, an adjacent defect is reported unless the change already in hand touches it. Not written yet — one observation across two runs is not enough to justify a rule.
 
 ## Validation
 
@@ -97,21 +107,24 @@ The hand-rolled manifest parser (standard library only, so CI needs no install s
 
 ## Version decision
 
-**Previous:** 1.6.0 · **New:** 1.7.0 · **Status:** stays `draft`
+**Previous:** 1.6.0 · **New:** 1.7.1 · **Status:** `draft` → **`beta`**
 
-Minor, not major: everything added is additive and no existing rule changed meaning. The plan's own criteria for leaving draft are not met — five evaluations are unrun and the skill has not been used on a real project. Promoting to `beta` on the strength of new documentation would be exactly the mistake the plan warns about.
+`1.7.0` for the stabilization work, then `1.7.1` for the one rule the evaluations produced (`document.fonts.check()` in `typography.md` §3) — a hardening of an existing gate, not new capability.
+
+The status move is evidence, not volume. Seven of the plan's eight criteria for leaving `draft` are met: validation passes, all six evaluations were run, none has a blocking failure, micro-fix routing is tested, a full redesign is tested, a responsive defect is tested, and the duplicate-rule audit is complete. The eighth — three real project tasks — is not, which is exactly why this is `beta` and not `stable`.
 
 ## Remaining risks
 
-- **Five evaluations are unrun.** This is the largest gap and the one that decides whether the routing table changes behaviour or only describes an intention.
-- **No real project has used the skill.** Every judgement in it is derived from fixtures built to test it, which is a closed loop.
-- **The scope classifier is untested against ambiguity.** "Just fix the table" on a screen with a broken information priority is the interesting case, and nothing has probed it.
-- **The examples are constructed, not transcribed.** They demonstrate the expected shape; none is a record of work actually delivered to someone.
-- **The validator checks structure, not correctness.** It can confirm a reference has a verification section; it cannot tell whether the section is right.
-- **Inter is still not installed locally,** so font delivery has never been verified end to end.
+- **No real project has used the skill.** Every judgement in it is derived from fixtures built to test it. The evaluations narrow this loop but do not close it — the runners were given a broken file and told a skill existed, which is not the same as someone reaching for it mid-task.
+- **The scope classifier is untested against ambiguity.** All six prompts had an unambiguous answer. The interesting case — "just fix the table" on a screen whose information priority is wrong, where the correct move is to say so and widen — was never posed.
+- **Adjacent-defect drift is real but under-evidenced.** Two runs fixed things outside the reported defect. Both disclosed it; neither was forbidden. One more occurrence and it earns a rule.
+- **Two runs read 9 and 13 of 14 references.** Justifiable for a broad refinement and a from-scratch redesign, but the upper end of routing is looser than the lower end, where discipline was excellent.
+- **The examples are constructed, not transcribed.** They demonstrate the expected shape; none is a record of work delivered to a person.
+- **The validator checks structure, not correctness.** It confirms a reference has a verification section; it cannot tell whether the section is right.
+- **Inter is still not installed locally.** Now measured rather than assumed — the fallback face is what renders — but end-to-end delivery has never been exercised.
 
 ## Not implemented
 
-- Clean-context runs of five evaluations (above)
-- No status promotion, by design
-- No changes to `solak-create-skill` or the skill template — the staged-execution rollout remains a separate, previously deferred task
+- No `stable` promotion — blocked on real project use, deliberately
+- No rule written for adjacent-defect drift — one observation short of justifying one
+- No changes to `solak-create-skill` or the skill template; the staged-execution rollout remains a separate, previously deferred task
