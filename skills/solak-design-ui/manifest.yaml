@@ -1,7 +1,7 @@
 # Machine-readable source of truth for solak-design-ui.
 # The prose form of routing lives in SKILL.md; validate_skill.py checks the two agree.
 name: solak-design-ui
-status: draft
+status: beta
 
 required:
   root:

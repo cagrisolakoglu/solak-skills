@@ -80,6 +80,31 @@ Preferred order: **self-hosted variable WOFF2** → approved framework loader �
 - Do not depend on a public CDN in restricted enterprise environments
 - **Verify in devtools:** the network request succeeded and computed styles show the intended family. A CSS declaration proves nothing
 
+### `document.fonts.check()` is not a delivery test
+
+The obvious programmatic check lies. It answers "can this text be rendered in *some* face", not "is the requested family available", so it returns `true` for a font that was never loaded — and for a font that does not exist:
+
+```js
+document.fonts.check('16px Inter')                      // true
+document.fonts.check('16px "Totally Not A Real Font"')  // true  ← same answer
+[...document.fonts].length                              // 0     ← nothing loaded at all
+```
+
+Measured on a page declaring `font-family: "Inter Variable", Inter, ui-sans-serif` with no `@font-face` and Inter not installed. `computed style` is no better: it echoes the declared stack, not the face that rendered.
+
+The test that works is a **width comparison against a family you know is absent**. If the requested font and a nonsense name measure identically, both fell back to the same face:
+
+```js
+const width = family => {
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.font = `16px ${family}`;
+  return ctx.measureText('Wg8').width;
+};
+width('Inter') === width('"__absent__"')   // true → Inter is NOT loaded
+```
+
+Same trap, same shape as the rest of this file: valid code, plausible output, silently wrong. **Report the face that actually rendered, not the one that was requested.** A system-stack fallback is a legitimate outcome — claiming Inter when Arial is on screen is not.
+
 Report one line:
 
 ```text
