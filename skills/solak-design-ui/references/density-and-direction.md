@@ -61,3 +61,14 @@ Cutting padding and shrinking type is not density, it is illegibility (`typograp
 Get the direction **approved**; it is expensive to reverse. Dark theme is not a default — it is whatever the product wants.
 
 One direction per screen. A Swiss table with a bento summary above it is not two directions but two components inside one: shared tokens, shared typography, only composition differs.
+
+## Verification
+
+- [ ] The density level is justified in one sentence by data volume, task and device — not by taste
+- [ ] Density is a token change; no component hardcodes a row height or a cell padding
+- [ ] Rows stay separable at the chosen density: one separator system, not zebra plus rules
+- [ ] Touch targets survive the level chosen, or touch is explicitly out of scope
+- [ ] Density did not buy space by dropping below the minimum text sizes (`typography.md`)
+- [ ] The direction was chosen after the layout existed, and **approved** before styling began
+- [ ] Dark theme was a decision, not a default
+- [ ] One direction per screen; a mixed composition shares tokens and typography

@@ -6,21 +6,33 @@
 > moving on); only the artefact changes. See Stage 7 of `references/ux-workflow.md`.
 >
 > Copy this file into the working area for the surface being designed and fill it in.
-> Stages 0-6 of `references/ux-workflow.md` produce the Context, UX decisions and
-> Wireframe sections. Do not start Work items until those three are complete.
+> Stages 0-6 of `references/ux-workflow.md` produce the Surface contract, UX decisions
+> and Wireframe sections. Do not start Work items until those three are complete.
 
-## Context
+## Surface contract
+
+*Required for a screen redesign, recommended for a component refinement, not needed for a
+micro fix. One line each — infer from the repository where you can, and write `Unknown`
+only when a material fact genuinely cannot be inferred. This is a contract, not a document.*
 
 - Surface:
 - Primary user:
 - Primary task (one sentence):
 - Success condition:
+- Main decision the user makes here:
 - Data volume (typical / worst case):
+- Data freshness (live / delayed / cached — and how the user is told):
+- Costly mistake:
 - Primary device and input:
 - Supported minimum width:
 - Existing tokens:
 - Existing typography:
-- Area NOT to change:
+- Loading behaviour:
+- Empty behaviour (first use vs filtered no-results):
+- Error behaviour:
+- Responsive strategy:
+- Accessibility risks:
+- Area NOT to change / out of scope:
 
 ## UX decisions
 
@@ -31,9 +43,6 @@
 - Rare or destructive actions, and where they live:
 - Progressive disclosure:
 - Responsive strategy (and the measurement behind it):
-- Loading strategy:
-- Empty strategy (first use vs filtered no-results):
-- Error strategy:
 
 ## Wireframe
 

@@ -1,0 +1,85 @@
+# Machine-readable source of truth for solak-design-ui.
+# The prose form of routing lives in SKILL.md; validate_skill.py checks the two agree.
+name: solak-design-ui
+status: draft
+
+required:
+  root:
+    - SKILL.md
+  references:
+    - references/ux-workflow.md
+    - references/layout-and-information-architecture.md
+    - references/responsive-grid.md
+    - references/interaction-and-states.md
+    - references/density-and-direction.md
+    - references/typography.md
+    - references/formatting.md
+    - references/tokens.md
+    - references/grid.md
+    - references/design-quality.md
+    - references/tables.md
+    - references/filters.md
+    - references/forms.md
+    - references/dashboards.md
+  templates:
+    - templates/design-todo.md
+
+# Surface references carry a "Read with" list; these are the routes SKILL.md states.
+surface_routes:
+  table:
+    - references/tables.md
+    - references/formatting.md
+    - references/typography.md
+  filters:
+    - references/filters.md
+    - references/interaction-and-states.md
+  form:
+    - references/forms.md
+    - references/interaction-and-states.md
+  dashboard:
+    - references/dashboards.md
+    - references/formatting.md
+
+cross_cutting:
+  redesign:
+    - references/ux-workflow.md
+    - references/layout-and-information-architecture.md
+    - references/responsive-grid.md
+    - references/interaction-and-states.md
+    - references/design-quality.md
+
+# Scope classes recognised by the skill. A micro fix must not require the redesign set.
+scopes:
+  - micro-fix
+  - component-refinement
+  - screen-redesign
+  - product-wide-system
+
+evals:
+  - evals/table-redesign.md
+  - evals/small-ui-fix.md
+  - evals/responsive-overflow.md
+  - evals/slow-filter-panel.md
+  - evals/dashboard-redesign.md
+  - evals/unsafe-user-request.md
+
+examples:
+  golden:
+    - examples/dense-energy-table.md
+    - examples/slow-filter-panel.md
+    - examples/long-data-entry-form.md
+    - examples/operations-dashboard.md
+  anti_patterns:
+    - examples/anti-patterns/card-everything.md
+    - examples/anti-patterns/unreadable-dense-table.md
+    - examples/anti-patterns/hidden-filter-state.md
+    - examples/anti-patterns/toast-only-errors.md
+    - examples/anti-patterns/arbitrary-breakpoints.md
+
+# Filenames that were considered during development and must never come back.
+# validate_skill.py fails if any of these is referenced or exists.
+retired_names:
+  - references/typography-system.md
+  - references/responsive-grid-system.md
+  - references/interaction-states.md
+  - references/states.md

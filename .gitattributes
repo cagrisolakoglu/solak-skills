@@ -6,6 +6,9 @@
 *.json text eol=lf
 *.mjs  text eol=lf
 *.sh   text eol=lf
+*.py   text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
 
 # PowerShell betikleri Windows'ta CRLF ile daha güvenli
 *.ps1  text eol=crlf
