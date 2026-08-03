@@ -9,7 +9,7 @@
     {
       "name": "solak-create-skill",
       "path": "skills/solak-create-skill",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "stable",
       "tags": ["meta", "scaffolding", "authoring"],
       "description": "Scaffolds a new skill in the solak-skills repository: creates the folder, fills the SKILL.md template, validates naming and updates the registry."

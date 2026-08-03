@@ -62,6 +62,7 @@ evals:
   - evals/slow-filter-panel.md
   - evals/dashboard-redesign.md
   - evals/unsafe-user-request.md
+  - evals/ambiguous-scope.md
 
 examples:
   golden:
