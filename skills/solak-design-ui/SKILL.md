@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, stale, error, conflict and overflow states, and the feedback, retry, undo and confirmation behaviour around them. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, responsive, interaction-state, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.8.0
+  version: 1.8.1
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: beta
@@ -103,19 +103,23 @@ Stage 1 of a redesign also produces the **surface contract** — the one-screen 
 | Responsive or overflow defect | `responsive-grid.md` + the affected surface |
 | Token inconsistency | `tokens.md` + the affected surface |
 | Misaligned columns inside one surface | `grid.md` + the affected surface |
-| Table / data grid | `tables.md` + `formatting.md` + `typography.md` |
-| Filter / search / query panel | `filters.md` + `interaction-and-states.md` |
-| Data-entry form | `forms.md` + `interaction-and-states.md` |
-| Dashboard / metric summary | `dashboards.md` + `formatting.md` |
-| Full screen redesign | `ux-workflow.md` + `layout-and-information-architecture.md` + `responsive-grid.md` + `interaction-and-states.md` + `design-quality.md`, plus the surface row above |
+| Table / data grid, small change | `tables.md` + `formatting.md` + `typography.md` |
+| Filter / search / query panel, small change | `filters.md` + `interaction-and-states.md` |
+| Data-entry form, small change | `forms.md` + `interaction-and-states.md` |
+| Dashboard / metric summary, small change | `dashboards.md` + `formatting.md` |
+| **Refinement of any surface** | that surface reference **plus its own Read with list** — see below |
+| Full screen redesign | `ux-workflow.md` + `layout-and-information-architecture.md` + `responsive-grid.md` + `interaction-and-states.md` + `design-quality.md`, plus the surface's Read with list |
 
-- Read `ux-workflow.md` only for a refinement or a redesign — never for a micro fix.
+The surface rows above are the **small-change** sets. A refinement legitimately reads more, and the authority on how much more is the surface reference's own **Read with** list — it is scoped to that surface and knows what its rules depend on. `tables.md`, for instance, names six companions, and a table refinement that reads all six is obeying the reference, not over-reading.
+
+Both directions of failure are real: reading fourteen files for a one-line fix is noise, and reading three for a table rebuild means deciding row height, the fold and the states without opening the files that own them.
+
+- Read `ux-workflow.md` only for a refinement or a redesign — never for a small change.
 - Read `design-quality.md` for redesigns and broad refinements, not for every change.
 - Read **one** surface reference unless the work genuinely spans two surfaces.
+- Skip a Read with entry when its subject is absent — a static file with no data layer has no refresh, partial or retry state for `interaction-and-states.md` to govern. Say that you skipped it and why.
 - Follow a cross-link when you need the rule; do not copy the rule between references.
 - Facts already established earlier in the task are not re-derived.
-
-Each surface reference opens with a **Read with** list — the cross-cutting files that surface actually needs.
 
 ### Canonical ownership
 
