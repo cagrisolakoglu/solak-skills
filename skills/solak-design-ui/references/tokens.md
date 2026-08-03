@@ -182,6 +182,16 @@ If a user preference exists, do not make the media query the only source:
 
 Making every number a token turns the layer into an unreadable dictionary. The test: **if the same decision has to be made in two different places, it is a token.**
 
+## One rule that belongs in the base layer
+
+Not a token, but it lives in the same file and nowhere else works as well:
+
+```css
+[hidden] { display: none !important; }
+```
+
+`hidden` applies `display: none` from the UA stylesheet, so any component with its own `display` rule stays visible while marked hidden — a state component then renders as an empty strip in its success state. One line here closes the whole class of bug. The full account is in `interaction-and-states.md` §20.
+
 ## Verification
 
 ```bash
@@ -190,6 +200,7 @@ rg -n "#[0-9a-fA-F]{3,8}|rgba?\(|oklch\(" src/components -g '!*tokens*'
 rg -n ":\s*\d+px" src/components -g '!*tokens*'
 rg -n "font-weight: [0-9]" src/components          # weight drift (450/550/650)
 rg -n "tabular-nums(?!\s+lining)" src -P           # figure set applied by half
+rg -n "^\s*\[hidden\]" src/styles                  # the base-layer rule above — present?
 ```
 
 - [ ] No palette, spacing or type constants in component files; everything via `var(--…)`

@@ -1,6 +1,6 @@
 # solak-design-ui Stabilization Report
 
-**Date:** 2026-08-02 · **Version:** 1.6.0 → 1.7.0 · **Status:** draft (unchanged, deliberately)
+**Date:** 2026-08-02 · **Version:** 1.6.0 → 1.8.0 · **Status:** draft → beta
 
 ## Summary
 
@@ -58,24 +58,26 @@ None removed. The audit measured where each cross-cutting rule is mentioned and 
 
 ## Evaluations
 
-All six have been run. Five were run in **isolated sessions** that saw only the skill path, the user prompt and a purpose-built broken surface — no evaluation file, no expected or forbidden list, no access to this conversation. Every reported outcome below was then re-measured independently rather than taken from the runner's own report.
+All six have been run, **all in isolated sessions** that saw only the skill path, the user prompt and a purpose-built broken surface — no evaluation file, no expected or forbidden list, no access to this conversation. Every reported outcome below was then re-measured independently rather than taken from the runner's own report.
 
 | Evaluation | Result | References read | Notes |
 |------------|--------|-----------------|-------|
-| `small-ui-fix` | **PASS** | 2 / 14 | No wireframe, no questions, no scope creep. Two adjacent defects reported and deliberately not fixed. |
+| `small-ui-fix` | **PASS** | 3 / 14 | No wireframe, no questions, no scope creep. A third defect reported and deliberately not fixed. Also corrected the routing wording — see below. |
 | `unsafe-user-request` | **PASS** | 4 / 14 | Declined the misleading representation, delivered the labelled-total version. Said it skipped `ux-workflow.md` because routing forbids it for a micro fix. |
 | `responsive-overflow` | **PASS** | 5 / 14 | Falsified the user's premise — the page overflowed at every width, not only mobile. Hit and named the `overflow: hidden` corner-clip trap. |
 | `slow-filter-panel` | **PASS** | 5 / 14 | The dimming trap did not occur: 19 rows retained at `opacity: 1` through a refresh, staleness carried by banner, border and progress line. |
 | `table-redesign` | **PASS** | 9 / 14 | Read "minimal" as fewer competing signals and **raised** the type size from 11px to 13px. |
 | `dashboard-redesign` | **PASS** | 13 / 14 | From nothing. One primary decision in one sentence; five tiles, not nine; freshness as its own tile. |
 
-**The routing table changes behaviour.** That was the open question, and the reference count answers it: 2, 4, 5, 5, 9, 13 — scaling with scope, from a two-file micro fix to a full redesign. Three runs named the files they deliberately skipped and why. One reported the `design-quality.md` gate as *unchecked rather than met* because routing told it not to load that file — which is precisely what the scoped-gates rule asks for and the behaviour most likely to have been ignored.
+**The routing table changes behaviour.** That was the open question, and the reference count answers it: 3, 4, 5, 5, 9, 13 — scaling with scope, from a three-file micro fix to a full redesign. Three runs named the files they deliberately skipped and why. One reported the `design-quality.md` gate as *unchecked rather than met* because routing told it not to load that file — which is precisely what the scoped-gates rule asks for and the behaviour most likely to have been ignored.
 
 ### What the runs found that the plan did not anticipate
 
 **Measurement passes go green while screenshots do not.** Three independent runs caught defects by eye that their own assertions had reported clean: a drawer covering the primary action at 1440, an empty banner strip in the success state, skeleton bars invisible against zebra rows. The skill's claim that some breakage appears only in the image is now evidence rather than assertion.
 
-**`hidden` loses to `display: flex`.** Three of the five runs hit this independently. A state component with a `display` rule renders as an empty strip in its success state, and the `hidden` attribute silently does nothing.
+**`hidden` loses to `display: flex`.** Three of five runs hit this independently. A state component with a `display` rule renders as an empty strip in its success state, and the `hidden` attribute silently does nothing. **Now a rule and a blocking gate** (`interaction-and-states.md` §20, base-layer line in `tokens.md`). Audited across ten surfaces afterwards: none was leaking and nine had no guard — the bug is not usually present, it is usually one `display` declaration away, which is what makes it a gate rather than a debugging note. One surface had ended up writing the per-component fix three times; the base-layer line replaces all three.
+
+**A rule that correct behaviour violates is a bad rule.** The micro-fix routing row said *"the surface reference that owns the rule — nothing else"*, singular. The clean re-run named two defects in two rule families and correctly read three references. The wording was wrong, not the run; reworded to *"one per defect, nothing more"*, and the evaluation's own expectation was corrected with it.
 
 **`document.fonts.check()` does not verify font delivery.** The dashboard run reported Inter absent despite the API returning `true`. Confirmed directly: `check('16px Inter')` is `true`, `check('16px "Totally Not A Real Font"')` is **also** `true`, `[...document.fonts].length` is `0`, and both measure an identical 31.1015625px. The obvious way to verify the font-delivery gate verifies nothing. Now encoded in `typography.md` §3 with the width-comparison test that does work — the only rule this pass added, and it came from an evaluation, as the plan requires.
 
@@ -109,7 +111,7 @@ The hand-rolled manifest parser (standard library only, so CI needs no install s
 
 **Previous:** 1.6.0 · **New:** 1.7.1 · **Status:** `draft` → **`beta`**
 
-`1.7.0` for the stabilization work, then `1.7.1` for the one rule the evaluations produced (`document.fonts.check()` in `typography.md` §3) — a hardening of an existing gate, not new capability.
+`1.7.0` for the stabilization work; `1.7.1` for the `document.fonts.check()` finding, which hardened an existing gate; `1.8.0` for the `hidden`-vs-`display` rule, which adds a **new** blocking gate and a new reference section, plus the micro-fix routing rewording.
 
 The status move is evidence, not volume. Seven of the plan's eight criteria for leaving `draft` are met: validation passes, all six evaluations were run, none has a blocking failure, micro-fix routing is tested, a full redesign is tested, a responsive defect is tested, and the duplicate-rule audit is complete. The eighth — three real project tasks — is not, which is exactly why this is `beta` and not `stable`.
 

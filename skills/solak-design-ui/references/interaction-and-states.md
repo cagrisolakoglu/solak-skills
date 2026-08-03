@@ -277,6 +277,44 @@ Dismiss behaviour:      not dismissible
 Accessibility:          announce politely once
 ```
 
+### The `hidden` attribute loses to any `display` rule
+
+A state component is normally toggled with the `hidden` attribute. `hidden` works by applying `display: none` from the UA stylesheet, so **any author `display` declaration on the same element beats it** — and the component then renders in its success state as an empty strip: correct height, correct border, no content, no error.
+
+```css
+.banner { display: flex; gap: 8px; padding: 8px 12px; }   /* ← defeats [hidden] */
+```
+
+```html
+<p class="banner" hidden>Showing data from 14:10.</p>      <!-- visible anyway -->
+```
+
+Nothing errors. The attribute is in the DOM, a code review that greps for `hidden` finds it, and the strip looks like a spacing bug rather than a broken state. It appeared independently in **three of five** clean-context runs of this skill, on banners, selection bars and notices — the components most likely to be `flex` and most likely to be conditional.
+
+Two fixes, in order of preference:
+
+```css
+/* 1 — one line, once, at the top of the stylesheet. Belongs in the base layer. */
+[hidden] { display: none !important; }
+
+/* 2 — or scope the display rule so it cannot apply while hidden. */
+.banner:not([hidden]) { display: flex; }
+```
+
+Prefer the first: it is a single rule that closes the whole class of bug, and `!important` is correct here because it is restoring UA behaviour rather than overriding a design decision. The second is only better when a component genuinely needs two visible display modes.
+
+The cost of choosing the second by default is measurable. One surface built without the base rule ended up carrying `.panel[hidden]`, `.banner[hidden]` and `.applied[hidden], .applied-summary[hidden]` — the same fix written three times, once per component, each one a line someone has to remember on the fourth component. Put it in the base layer (`tokens.md`) and there is no fourth line.
+
+Audited across ten surfaces: none was leaking, and nine had no guard. The bug is not usually present — it is usually **one `display` declaration away**, which is why this is a gate and not a debugging note.
+
+The check is one line per conditional component, and it must read the **computed** value:
+
+```js
+el.hidden && getComputedStyle(el).display !== 'none'   // → the state is leaking
+```
+
+Same shape as the other traps in this file and in `responsive-grid.md`: valid CSS, silent output, wrong result, visible only in the image or the computed style.
+
 ## Surface notes
 
 **Tables** (`tables.md`) — row-level pending and error, partial row loading, bulk action feedback, retry that does not clear existing rows, technical failure detail reachable without replacing the table.
@@ -311,6 +349,7 @@ Plus: slow network, offline, server validation failure, partial data, stale data
 - [ ] `readonly` and `disabled` remain distinguishable, dark theme included
 - [ ] `focus-visible` present; hover is never the only access path
 - [ ] Colour is never the only state cue
+- [ ] Every conditional component is **hidden when hidden** — `el.hidden && getComputedStyle(el).display !== 'none'` is false for all of them
 - [ ] Critical feedback is never toast-only
 - [ ] Loading and pending states carry text, not just a spinner
 - [ ] Dialog focus managed and returned; live regions do not duplicate

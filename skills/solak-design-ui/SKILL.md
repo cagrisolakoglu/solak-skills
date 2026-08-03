@@ -2,7 +2,7 @@
 name: solak-design-ui
 description: Designs and implements UX-first, data-dense enterprise interfaces. Starts by identifying the user's primary task, the information hierarchy, the task flow and a layout skeleton; then reduces friction, chooses density and typography, produces an ordered implementation TODO and executes it step by step, validating each item before the next. Visual polish comes last, never first. Covers tables and data grids, filter and query panels, data-entry forms, report screens and metric dashboards, including their loading, empty, no-results, partial, stale, error, conflict and overflow states, and the feedback, retry, undo and confirmation behaviour around them. Tech-agnostic — semantic HTML plus CSS custom properties, adapted to whatever framework is detected. Use when the user works on a table, grid, filter panel, form, report screen or dashboard, says a screen is cluttered, slow to use or unreadable, or invokes /solak-design-ui. Self-contained: carries its own UX workflow, layout, responsive, interaction-state, quality, token, typography, formatting and chart rules, with no dependency on other skills or external rule files. Not for marketing pages, landing pages or brand surfaces.
 metadata:
-  version: 1.7.1
+  version: 1.8.0
   author: cagrisolakoglu
   tags: [design, ux, frontend, ui, data-dense, tables, forms, dashboards, self-contained]
   status: beta
@@ -42,7 +42,7 @@ Classify the request **before** anything else. The wrong process is a real failu
 | **Product-wide system** | A design system across every product surface | out of scope — constrain to one representative surface, or route to a separate project |
 
 **Micro fix** — *"The amount column is left-aligned." "The focus ring is missing." "The sticky header overlaps one column."*
-Inspect the component, load only the reference that owns the rule, make the smallest change, verify that one thing. **No wireframe, no product-strategy questions, no stage list.** State what you changed and how you checked it.
+Inspect the component, load the reference that owns each named defect and no more, make the smallest change, verify that one thing. **No wireframe, no product-strategy questions, no stage list.** State what you changed and how you checked it.
 
 **Component refinement** — *"This table is too busy." "This filter panel is hard to use."*
 Name the local task, review information priority, states and narrow-width behaviour for that component, write a short TODO, stay inside the component and its immediate context. Do not redesign the page around it.
@@ -98,7 +98,7 @@ Stage 1 of a redesign also produces the **surface contract** — the one-screen 
 
 | Situation | Read |
 |-----------|------|
-| Micro alignment, focus or spacing defect | the surface reference that owns the rule — nothing else |
+| Micro alignment, focus or spacing defect | the reference that **owns each named defect** — one per defect, nothing more |
 | Numeric formatting defect | `formatting.md` + `typography.md` |
 | Responsive or overflow defect | `responsive-grid.md` + the affected surface |
 | Token inconsistency | `tokens.md` + the affected surface |
@@ -159,6 +159,7 @@ Gates are scoped like the workflow. A **micro fix** answers only the gates its o
 - [ ] Errors state what failed and what to do; retry **names what it retries** and does not clear existing content
 - [ ] Destructive actions state their scope; irreversible ones confirm, routine reversible ones offer undo instead
 - [ ] Critical confirmation is never toast-only; loading and pending carry text, not just a spinner
+- [ ] A conditional component is actually hidden when hidden — a `display` rule on it defeats the `hidden` attribute and renders an empty strip in the success state
 - [ ] Concurrent edits cannot silently overwrite newer data; user input survives a validation or request failure
 - [ ] The primary task is completable by keyboard; `focus-visible` is visible
 - [ ] Text contrast ≥ 4.5:1 (large text ≥ 3:1), status colours included
